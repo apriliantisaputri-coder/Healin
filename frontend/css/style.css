@@ -1,0 +1,236 @@
+/* =========================================================
+   HEAL.IN — DESIGN SYSTEM
+   Palette   : hijau tenang (kepercayaan & pemulihan) + krem hangat
+   Display   : Fraunces (serif, hangat, personal)
+   Body/UI   : Inter (netral, mudah dibaca di form panjang)
+   Signature : garis "pulse" (EKG) yang berdenyut pelan di hero —
+               metafora "memeriksa detak kondisi mentalmu"
+   ========================================================= */
+
+:root {
+  --hijau-900: #16321f;
+  --hijau-700: #21492c;
+  --hijau-600: #2f6140;
+  --hijau-500: #4c7a4f;
+  --hijau-300: #9dc6a1;
+  --hijau-100: #e4efe1;
+  --krem-100: #faf7ef;
+  --krem-50: #fffdf8;
+  --koral-500: #d97a5f;
+  --tinta: #1f2a22;
+  --tinta-muted: #5b6b5e;
+  --garis: #dce6db;
+
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", -apple-system, sans-serif;
+
+  --radius-lg: 22px;
+  --radius-md: 14px;
+  --shadow-soft: 0 12px 32px -16px rgba(22, 50, 31, 0.28);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--tinta);
+  background: var(--krem-50);
+  line-height: 1.6;
+}
+
+h1, h2, h3, .display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--hijau-900);
+  letter-spacing: -0.01em;
+}
+
+a { text-decoration: none; }
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hijau-600);
+}
+
+/* ---------- Navbar ---------- */
+.navbar-healin {
+  background: var(--krem-50);
+  border-bottom: 1px solid var(--garis);
+  padding: 0.9rem 0;
+}
+.navbar-healin .brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.35rem;
+  color: var(--hijau-900);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.navbar-healin .brand svg { width: 30px; height: 30px; }
+.navbar-healin .nav-link {
+  color: var(--tinta-muted) !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+.navbar-healin .nav-link.active,
+.navbar-healin .nav-link:hover { color: var(--hijau-700) !important; }
+
+.btn-healin {
+  background: var(--hijau-700);
+  color: var(--krem-50) !important;
+  border: none;
+  border-radius: 999px;
+  padding: 0.65rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform .18s ease, background .18s ease;
+}
+.btn-healin:hover { background: var(--hijau-900); transform: translateY(-1px); }
+
+.btn-healin-outline {
+  background: transparent;
+  color: var(--hijau-700) !important;
+  border: 1.5px solid var(--hijau-600);
+  border-radius: 999px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.btn-healin-outline:hover { background: var(--hijau-100); }
+
+/* ---------- Hero ---------- */
+.hero {
+  background: linear-gradient(160deg, var(--hijau-900) 0%, var(--hijau-600) 68%, var(--hijau-500) 100%);
+  color: var(--krem-50);
+  border-radius: 0 0 40px 40px;
+  padding: 4.5rem 0 5rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero h1 { color: #fff; font-size: clamp(2.1rem, 4vw, 3.1rem); line-height: 1.12; }
+.hero .lede { color: rgba(255,255,255,0.86); font-size: 1.08rem; max-width: 46ch; }
+.hero .eyebrow-pill {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: .4rem .9rem; border-radius: 999px;
+  font-size: .8rem; color: #fff; margin-bottom: 1.2rem;
+}
+
+/* Signature pulse line */
+.pulse-wrap { position: relative; }
+.pulse-line {
+  stroke: var(--koral-500);
+  stroke-width: 2.4;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 340;
+  stroke-dashoffset: 340;
+  animation: draw-pulse 2.6s ease-out infinite;
+}
+@keyframes draw-pulse {
+  0%   { stroke-dashoffset: 340; }
+  55%  { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pulse-line { animation: none; stroke-dashoffset: 0; }
+}
+
+/* ---------- Sections ---------- */
+.section { padding: 4.5rem 0; }
+.section-tight { padding: 2.5rem 0; }
+.section-title { font-size: clamp(1.6rem, 2.6vw, 2.1rem); }
+
+.card-healin {
+  background: #fff;
+  border: 1px solid var(--garis);
+  border-radius: var(--radius-md);
+  padding: 1.6rem;
+  height: 100%;
+}
+.card-healin .icon-badge {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: var(--hijau-100); color: var(--hijau-700);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: .9rem;
+}
+
+.kondisi-card {
+  border-radius: var(--radius-md);
+  padding: 1.4rem;
+  border: 1px solid var(--garis);
+  height: 100%;
+  background: var(--krem-100);
+}
+.kondisi-card .tingkat {
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; padding: .2rem .6rem; border-radius: 999px;
+  display: inline-block; margin-bottom: .6rem;
+}
+.tingkat-normal   { background: #DCEBD9; color: var(--hijau-700); }
+.tingkat-ringan   { background: #F3EBC8; color: #8a6d1c; }
+.tingkat-berat    { background: #F4DCC8; color: #a35318; }
+.tingkat-cemas    { background: #E4D9F3; color: #5f3aa3; }
+.tingkat-depresi  { background: #F3D3D3; color: #a33333; }
+
+footer.footer-healin {
+  background: var(--hijau-900);
+  color: rgba(255,255,255,0.75);
+  padding: 3rem 0 1.5rem;
+}
+footer.footer-healin h6 { color: #fff; font-family: var(--font-body); font-weight: 700; }
+footer.footer-healin a { color: rgba(255,255,255,0.75); }
+footer.footer-healin a:hover { color: #fff; }
+
+/* ---------- Formulir gejala (questionnaire) ---------- */
+.progress-healin {
+  height: 8px; border-radius: 999px; background: var(--hijau-100); overflow: hidden;
+}
+.progress-healin .bar {
+  height: 100%; background: var(--koral-500); border-radius: 999px;
+  transition: width .35s ease;
+}
+.gejala-option {
+  display: flex; align-items: center; gap: .8rem;
+  border: 1.5px solid var(--garis); border-radius: var(--radius-md);
+  padding: .9rem 1.1rem; cursor: pointer; transition: border-color .15s, background .15s;
+  background: #fff;
+}
+.gejala-option:hover { border-color: var(--hijau-500); }
+.gejala-option.checked { border-color: var(--hijau-700); background: var(--hijau-100); }
+.gejala-option input { width: 1.15rem; height: 1.15rem; accent-color: var(--hijau-700); }
+.gejala-option label { cursor: pointer; margin: 0; font-weight: 500; }
+
+.step-panel { display: none; }
+.step-panel.active { display: block; animation: fade-in .25s ease; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(6px);} to { opacity:1; transform: translateY(0);} }
+
+/* ---------- Hasil ---------- */
+.hasil-badge {
+  display: inline-block; padding: .5rem 1.2rem; border-radius: 999px;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.4rem;
+}
+.trace-item {
+  border-left: 3px solid var(--hijau-500);
+  padding: .5rem 0 .5rem 1rem; margin-bottom: .6rem;
+  font-size: .92rem; color: var(--tinta-muted);
+}
+.trace-item code { background: var(--hijau-100); padding: .1rem .4rem; border-radius: 6px; font-size: .85rem; }
+
+.alert-disclaimer {
+  background: var(--krem-100); border: 1px dashed var(--hijau-300);
+  border-radius: var(--radius-md); padding: 1rem 1.2rem; font-size: .9rem; color: var(--tinta-muted);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--hijau-100) 25%, #f3f7f1 37%, var(--hijau-100) 63%);
+  background-size: 400% 100%; animation: shimmer 1.4s ease infinite; border-radius: var(--radius-md);
+}
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }

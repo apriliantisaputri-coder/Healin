@@ -1,0 +1,7 @@
+flask==3.0.3
+flask-cors==4.0.1
+experta==1.9.4
+frozendict==1.2
+schema==0.6.7
+sqlalchemy==2.0.30
+pytest==8.2.0

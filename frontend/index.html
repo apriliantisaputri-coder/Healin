@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heal.In — Mental Health Checker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg navbar-healin sticky-top">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 24 24"><path fill="#2f6140" d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2 4.5 5.4 3.7c2-.5 4 .3 5.1 2 .9-1.7 2.9-2.5 5-2 3.4.8 5 4.4 3.4 8C19.5 16.4 12 21 12 21z"/></svg>
+      Heal.In
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link active" href="index.html">Beranda</a></li>
+        <li class="nav-item"><a class="nav-link" href="#tentang">Tentang Sistem</a></li>
+        <li class="nav-item"><a class="nav-link" href="#cara-kerja">Cara Kerja</a></li>
+        <li class="nav-item ms-lg-2"><a class="btn-healin" href="questionnaire.html">Mulai Skrining</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <span class="eyebrow-pill">Sistem Pakar Kesehatan Mental Mahasiswa</span>
+        <h1 class="display">Ruang Awal untuk Memahami Kondisi Mentalmu.</h1>
+        <p class="lede mt-3">Kenali kondisi mentalmu melalui skrining berbasi AI yang
+          cepat, mudah, dan informatif. Dapatkan hasil analisis serta
+          rekomendasi yang dapat membantumu mengambil langkah
+          selanjutnya.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a href="questionnaire.html" class="btn-healin">Mulai Skrining Sekarang</a>
+          <a href="#cara-kerja" class="btn-healin-outline" style="border-color:rgba(255,255,255,.5); color:#fff !important;">Lihat Cara Kerja</a>
+        </div>
+        <p class="mt-4" style="font-size:.85rem; color:rgba(255,255,255,.7);">
+          Hasil skrining bersifat identifikasi awal, bukan pengganti diagnosis tenaga profesional.
+        </p>
+      </div>
+      <div class="col-lg-5">
+        <div class="pulse-wrap">
+          <svg viewBox="0 0 360 160" width="100%">
+            <polyline class="pulse-line" points="0,80 60,80 85,30 110,130 135,80 165,80 185,50 205,110 230,80 360,80" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= TENTANG / FITUR ================= -->
+<section class="section" id="tentang">
+  <div class="container">
+    <p class="eyebrow mb-2">Tentang Heal.In</p>
+    <h2 class="section-title mb-4">Skrining yang bisa kamu telusuri alasannya</h2>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="card-healin">
+          <div class="icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h4l2-7 4 14 2-7h4"/></svg>
+          </div>
+          <h3 class="h6">Forward Chaining</h3>
+          <p class="small text-muted mb-0">Inferensi bertahap dari gejala yang kamu pilih menuju satu kesimpulan kondisi.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card-healin">
+          <div class="icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg>
+          </div>
+          <h3 class="h6">Rule-Based Reasoning</h3>
+          <p class="small text-muted mb-0">Aturan IF-THEN disusun dari referensi psikologi (PHQ-9, GAD-7, PSS-10).</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card-healin">
+          <div class="icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <h3 class="h6">Penjelasan Transparan</h3>
+          <p class="small text-muted mb-0">Setiap hasil disertai alur aturan yang aktif, bukan kotak hitam.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card-healin">
+          <div class="icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.35-9-8.8C1.4 8.4 3 5 6.4 4.4c2-.4 3.8.4 5.6 2.6 1.8-2.2 3.6-3 5.6-2.6C21 5 22.6 8.4 21 12.2 19 16.65 12 21 12 21z"/></svg>
+          </div>
+          <h3 class="h6">Rekomendasi Bertahap</h3>
+          <p class="small text-muted mb-0">Dari saran mandiri sampai anjuran konsultasi ke konselor kampus.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= KONDISI YANG DIDETEKSI ================= -->
+<section class="section" style="background:var(--hijau-100);">
+  <div class="container">
+    <p class="eyebrow mb-2">Cakupan Skrining</p>
+    <h2 class="section-title mb-4">Lima kondisi yang dapat dikenali sistem</h2>
+    <div class="row g-3">
+      <div class="col-md-6 col-lg-4">
+        <div class="kondisi-card"><span class="tingkat tingkat-normal">Terpantau baik</span>
+          <h3 class="h6 mb-1">Normal</h3>
+          <p class="small text-muted mb-0">Gejala yang dilaporkan minim dan belum mengarah ke pola tertentu.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="kondisi-card"><span class="tingkat tingkat-ringan">Tingkat ringan</span>
+          <h3 class="h6 mb-1">Stres Ringan</h3>
+          <p class="small text-muted mb-0">Biasanya dipicu tekanan akademik jangka pendek.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="kondisi-card"><span class="tingkat tingkat-berat">Tingkat berat</span>
+          <h3 class="h6 mb-1">Stres Berat</h3>
+          <p class="small text-muted mb-0">Kombinasi gejala fisik, kognitif, dan emosional yang menumpuk.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="kondisi-card"><span class="tingkat tingkat-cemas">Perlu perhatian</span>
+          <h3 class="h6 mb-1">Kecemasan (Anxiety)</h3>
+          <p class="small text-muted mb-0">Ditandai rasa cemas berlebihan yang menetap.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="kondisi-card"><span class="tingkat tingkat-depresi">Segera konsultasi</span>
+          <h3 class="h6 mb-1">Potensi Depresi</h3>
+          <p class="small text-muted mb-0">Rasa sedih berkepanjangan, putus asa, atau menarik diri.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 d-flex">
+        <div class="kondisi-card d-flex flex-column justify-content-center align-items-start" style="background:var(--hijau-700); color:#fff;">
+          <p class="mb-3" style="color:rgba(255,255,255,.85);">Ingin tahu kondisimu sekarang?</p>
+          <a href="questionnaire.html" class="btn-healin" style="background:#fff; color:var(--hijau-800) !important;">Mulai Skrining</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CARA KERJA ================= -->
+<section class="section" id="cara-kerja">
+  <div class="container">
+    <p class="eyebrow mb-2">Cara Kerja</p>
+    <h2 class="section-title mb-4">Empat langkah singkat</h2>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="card-healin"><p class="eyebrow mb-2">Langkah 1</p><h3 class="h6">Isi gejala</h3>
+        <p class="small text-muted mb-0">Centang gejala fisik, kognitif, emosional, dan perilaku yang kamu rasakan.</p></div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card-healin"><p class="eyebrow mb-2">Langkah 2</p><h3 class="h6">Sistem menelusuri aturan</h3>
+        <p class="small text-muted mb-0">Mesin inferensi mencocokkan gejalamu dengan basis aturan IF-THEN.</p></div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card-healin"><p class="eyebrow mb-2">Langkah 3</p><h3 class="h6">Kesimpulan ditarik</h3>
+        <p class="small text-muted mb-0">Kondisi dengan tingkat keparahan tertinggi yang aktif menjadi hasil akhir.</p></div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card-healin"><p class="eyebrow mb-2">Langkah 4</p><h3 class="h6">Rekomendasi tindak lanjut</h3>
+        <p class="small text-muted mb-0">Kamu menerima saran mandiri, atau anjuran konsultasi profesional.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer-healin">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <h6>Heal.In</h6>
+        <p class="small">Sistem pakar skrining kesehatan mental mahasiswa — proyek akhir mata kuliah Kecerdasan Buatan, Kelompok IK24-A.</p>
+      </div>
+      <div class="col-md-4">
+        <h6>Kontak</h6>
+        <p class="small mb-1">Kampus Institut Teknologi B.J Habibie, Parepare</p>
+        <p class="small mb-0">Heal.In@gmail.com</p>
+      </div>
+      <div class="col-md-4">
+        <h6>Perlu bantuan segera?</h6>
+        <p class="small mb-0">Hasil skrining bukan pengganti diagnosis. Hubungi konselor kampus atau layanan kesehatan mental profesional bila kondisimu berat.</p>
+      </div>
+    </div>
+    <hr style="border-color:rgba(255,255,255,.15); margin:2rem 0 1rem;">
+    <p class="small mb-0" style="color:rgba(255,255,255,.55);">© 2026 Heal.In — ITH Kelompok IK24-A.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

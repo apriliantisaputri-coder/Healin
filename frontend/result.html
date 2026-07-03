@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hasil Skrining — Heal.In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar navbar-healin">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 24 24"><path fill="#2f6140" d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2 4.5 5.4 3.7c2-.5 4 .3 5.1 2 .9-1.7 2.9-2.5 5-2 3.4.8 5 4.4 3.4 8C19.5 16.4 12 21 12 21z"/></svg>
+      Heal.In
+    </a>
+    <a href="index.html" class="btn-healin-outline">Kembali ke Beranda</a>
+  </div>
+</nav>
+
+<main class="section-tight">
+  <div class="container" style="max-width: 720px;">
+
+    <div id="loadingState">
+      <p class="eyebrow mb-2">Hasil Skrining</p>
+      <div class="skeleton mb-3" style="height:2.2rem; width:60%;"></div>
+      <div class="skeleton mb-2" style="height:1rem; width:90%;"></div>
+      <div class="skeleton" style="height:1rem; width:75%;"></div>
+    </div>
+
+    <div id="resultState" class="d-none">
+      <p class="eyebrow mb-2">Hasil Skrining</p>
+      <span class="hasil-badge" id="kondisiBadge">—</span>
+      <p class="text-muted mt-2 mb-4" id="skorText"></p>
+
+      <div class="alert-disclaimer mb-4">
+        Hasil ini merupakan identifikasi awal berdasarkan aturan sistem pakar, <strong>bukan diagnosis klinis</strong>.
+        Untuk kepastian lebih lanjut, konsultasikan dengan psikolog atau konselor profesional.
+      </div>
+
+      <h2 class="h6 mb-2">Alur Penalaran Sistem</h2>
+      <p class="small text-muted mb-3">Berikut aturan IF-THEN yang aktif selama proses inferensi (explanation trace):</p>
+      <div id="traceList" class="mb-4"></div>
+
+      <h2 class="h6 mb-2">Rekomendasi Tindak Lanjut</h2>
+      <ul id="rekomendasiList" class="mb-4"></ul>
+
+      <div class="d-flex flex-wrap gap-3">
+        <a href="questionnaire.html" class="btn-healin">Ulangi Pemeriksaan</a>
+        <a href="index.html" class="btn-healin-outline">Kembali ke Beranda</a>
+      </div>
+    </div>
+
+    <div id="emptyState" class="d-none">
+      <p class="eyebrow mb-2">Belum ada hasil</p>
+      <h1 class="display h4 mb-3">Kamu belum mengisi formulir gejala.</h1>
+      <p class="text-muted mb-4">Isi dulu formulir gejala supaya sistem bisa menampilkan hasil skrining di halaman ini.</p>
+      <a href="questionnaire.html" class="btn-healin">Isi Formulir Gejala</a>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const TINGKAT_STYLE = {
+  "Normal":          { badgeBg: "#DCEBD9", badgeColor: "#21492c" },
+  "Stres Ringan":    { badgeBg: "#F3EBC8", badgeColor: "#8a6d1c" },
+  "Stres Berat":     { badgeBg: "#F4DCC8", badgeColor: "#a35318" },
+  "Kecemasan":       { badgeBg: "#E4D9F3", badgeColor: "#5f3aa3" },
+  "Potensi Depresi": { badgeBg: "#F3D3D3", badgeColor: "#a33333" },
+};
+
+function render() {
+  const raw = sessionStorage.getItem("healin_hasil");
+  document.getElementById("loadingState").classList.add("d-none");
+
+  if (!raw) {
+    document.getElementById("emptyState").classList.remove("d-none");
+    return;
+  }
+
+  const hasil = JSON.parse(raw);
+  document.getElementById("resultState").classList.remove("d-none");
+
+  const badge = document.getElementById("kondisiBadge");
+  badge.textContent = hasil.kondisi;
+  const style = TINGKAT_STYLE[hasil.kondisi] || TINGKAT_STYLE["Normal"];
+  badge.style.background = style.badgeBg;
+  badge.style.color = style.badgeColor;
+
+  document.getElementById("skorText").textContent =
+    `Skor keparahan: ${hasil.skor} · berdasarkan ${hasil.gejala_dipilih.length} gejala yang dipilih`;
+
+  const traceList = document.getElementById("traceList");
+  traceList.innerHTML = "";
+  hasil.explanation_trace.forEach((jejak) => {
+    const div = document.createElement("div");
+    div.className = "trace-item";
+    div.innerHTML = `<strong>${jejak.kondisi}</strong> (skor ${jejak.skor})<br><code>${jejak.aturan}</code>`;
+    traceList.appendChild(div);
+  });
+
+  const rekomendasiList = document.getElementById("rekomendasiList");
+  rekomendasiList.innerHTML = "";
+  hasil.rekomendasi.forEach((saran) => {
+    const li = document.createElement("li");
+    li.textContent = saran;
+    rekomendasiList.appendChild(li);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
