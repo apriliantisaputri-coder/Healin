@@ -1,3 +1,7 @@
+
+
+<video src="https://github.com/user-attachments/assets/21c0549b-ff33-41e6-a4a0-78203e7ff2ec" width="100%" controls></video>
+
 # Heal.In - Backend (Sistem Pakar Forward Chaining)
 
 Source code mesin inferensi & REST API untuk sistem pakar Heal.In
