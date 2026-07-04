@@ -72,7 +72,8 @@ form.addEventListener("submit", async (e) => {
   btnSubmit.textContent = "Memproses...";
 
   try {
-    const hasil = await apiPostSkrining(dipilih);
+    const session = healinGetSession(); // dari js/auth.js, sudah dimuat di questionnaire.html
+    const hasil = await apiPostSkrining(dipilih, session);
     sessionStorage.setItem("healin_hasil", JSON.stringify({ ...hasil, gejala_dipilih: dipilih }));
     window.location.href = "result.html";
   } catch (err) {

@@ -38,6 +38,7 @@ app = Flask(__name__)
 from config import Config  # noqa: E402
 from models import db  # noqa: E402
 from models import models as _models  # noqa: E402,F401  (registrasi tabel ke db.metadata)
+from models.models import Condition, ExaminationHistory, User  # noqa: E402
 
 app.config.from_object(Config)
 db.init_app(app)
@@ -98,6 +99,84 @@ def daftar_gejala():
     return jsonify(sorted(SEMUA_GEJALA)), 200
 
 
+def _simpan_riwayat_pemeriksaan(user_email, user_nama, gejala, hasil, rekomendasi):
+    """Simpan satu hasil skrining ke tabel ``examination_history`` (PostgreSQL).
+
+    Dipanggil TEPAT SEKALI per request /api/skrining, setelah proses
+    inferensi Forward Chaining selesai (``hasil`` sudah final). Fungsi
+    ini murni efek samping (side effect) penyimpanan riwayat -- ia
+    TIDAK mengubah ``hasil`` maupun response yang dikirim ke frontend,
+    dan TIDAK menyentuh rule engine Experta / algoritma Forward Chaining.
+
+    Aturan:
+    - Jika pengguna belum login (``user_email`` kosong), riwayat TIDAK
+      disimpan. Frontend sudah menegakkan "wajib login" lewat
+      ``healinRequireAuth()`` di questionnaire.html/result.html
+      (lihat frontend/js/auth.js) -- mekanisme itu tidak diubah sama
+      sekali di sini.
+    - Karena satu klik "Lihat Hasil" = satu kali panggilan endpoint ini
+      (tombol submit dinonaktifkan saat memproses, dan halaman Result
+      hanya membaca sessionStorage tanpa memanggil API lagi saat
+      di-refresh), maka satu sesi skrining otomatis menghasilkan tepat
+      satu baris riwayat -- tidak ada mekanisme tambahan yang
+      diperlukan untuk mencegah duplikasi di titik ini.
+    - Jika penyimpanan ke database gagal (mis. PostgreSQL belum
+      menyala/kredensial salah), error dicatat ke log backend dan
+      TIDAK dilempar ke pemanggil, supaya hasil skrining tetap bisa
+      ditampilkan ke pengguna seperti biasa.
+
+    Catatan penting: sistem login saat ini masih demo/frontend-only
+    (localStorage, belum ada endpoint register/login backend). Baris
+    pada tabel ``users`` di sini HANYA dibuat/dicari sebagai target
+    foreign key agar ``examination_history.user_id`` valid -- ini
+    bukan sistem autentikasi baru dan tidak mengubah mekanisme
+    login/register yang sudah ada di frontend.
+    """
+    if not user_email:
+        print(
+            "[Heal.In] Riwayat skrining TIDAK disimpan: pengguna belum login "
+            "(user_email tidak dikirim oleh frontend)."
+        )
+        return
+
+    try:
+        user = User.query.filter_by(email=user_email).first()
+        if user is None:
+            user = User(
+                full_name=user_nama or user_email,
+                email=user_email,
+                password_hash="",
+            )
+            db.session.add(user)
+            db.session.flush()  # supaya user.id tersedia untuk FK di bawah
+
+        kondisi_nama = hasil["kondisi"]
+        condition = Condition.query.filter_by(condition_name=kondisi_nama).first()
+        severity = condition.severity if condition is not None else None
+
+        riwayat = ExaminationHistory(
+            user_id=user.id,
+            detected_condition=kondisi_nama,
+            severity=severity,
+            selected_symptoms=gejala,
+            explanation_trace=hasil["explanation_trace"],
+            recommendation=rekomendasi,
+        )
+        db.session.add(riwayat)
+        db.session.commit()
+        print(
+            f"[Heal.In] Riwayat skrining tersimpan (user_id={user.id}, "
+            f"kondisi={kondisi_nama})."
+        )
+    except Exception as exc:  # noqa: BLE001
+        db.session.rollback()
+        print(
+            "[Heal.In] PERINGATAN: gagal menyimpan riwayat skrining ke "
+            f"PostgreSQL. Hasil skrining tetap ditampilkan ke pengguna seperti "
+            f"biasa. Detail error: {exc}"
+        )
+
+
 @app.route("/api/skrining", methods=["POST"])
 def skrining():
     """Menerima daftar gejala yang dicentang pengguna, menjalankan
@@ -114,6 +193,16 @@ def skrining():
         return jsonify({"error": f"Gejala tidak dikenali: {tidak_dikenali}"}), 422
 
     hasil = run_inference(gejala)
+    rekomendasi = get_rekomendasi(hasil["kondisi"])
+
+    # Titik penyimpanan riwayat: TEPAT setelah inferensi Forward Chaining
+    # selesai (hasil final) dan rekomendasi akhir sudah didapat -- lihat
+    # docstring _simpan_riwayat_pemeriksaan() di atas. Dibungkus try/except
+    # di dalam fungsi tersebut sehingga kegagalan database tidak pernah
+    # menggagalkan response di bawah ini.
+    user_email = (data.get("user_email") or "").strip().lower() or None
+    user_nama = (data.get("user_nama") or "").strip() or None
+    _simpan_riwayat_pemeriksaan(user_email, user_nama, gejala, hasil, rekomendasi)
 
     return (
         jsonify(
@@ -121,7 +210,7 @@ def skrining():
                 "kondisi": hasil["kondisi"],
                 "skor": hasil["skor"],
                 "explanation_trace": hasil["explanation_trace"],
-                "rekomendasi": get_rekomendasi(hasil["kondisi"]),
+                "rekomendasi": rekomendasi,
             }
         ),
         200,

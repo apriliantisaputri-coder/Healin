@@ -10,11 +10,24 @@ async function apiGetDaftarGejala() {
   return res.json();
 }
 
-async function apiPostSkrining(daftarGejala) {
+async function apiPostSkrining(daftarGejala, user) {
+  // `user` (opsional) = { nama, email } dari sesi login saat ini
+  // (lihat healinGetSession() di js/auth.js). Dikirim HANYA supaya
+  // backend bisa mengaitkan hasil skrining ini dengan user_id yang
+  // benar saat menyimpan riwayat pemeriksaan -- tidak mengubah
+  // endpoint, tidak mengubah alur inferensi, dan sepenuhnya
+  // backward-compatible (kalau tidak dikirim, backend cukup tidak
+  // menyimpan riwayat, seperti sebelum perubahan ini).
+  const payload = { gejala: daftarGejala };
+  if (user && user.email) {
+    payload.user_email = user.email;
+    payload.user_nama = user.nama;
+  }
+
   const res = await fetch(`${API_BASE_URL}/api/skrining`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ gejala: daftarGejala }),
+    body: JSON.stringify(payload),
   });
   const data = await res.json();
   if (!res.ok) {
