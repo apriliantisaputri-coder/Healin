@@ -34,10 +34,63 @@ healin_backend/
 └── requirements.txt
 ```
 
+## Database (PostgreSQL)
+
+Sejak migrasi database, Heal.In menggunakan **PostgreSQL** sebagai
+database utama (lihat `models/models.py`, `config.py`). Rule engine
+Experta, endpoint `/api/gejala` dan `/api/skrining`, serta seluruh
+tampilan frontend **tidak berubah** dan tidak bergantung pada database
+ini -- database menjadi fondasi untuk fitur Login, History, Dashboard,
+dan penyimpanan hasil skrining ke depannya.
+
+1. Salin `.env.example` menjadi `.env` lalu sesuaikan kredensial:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Buat database PostgreSQL:
+
+   ```bash
+   createdb healin_db
+   ```
+
+3. Jalankan migrasi (skema tabel: `users`, `symptoms`, `conditions`,
+   `rules`, `recommendations`, `examination_history`, serta tabel lama
+   `pengguna` & `sesi_pemeriksaan` yang tetap dipertahankan):
+
+   ```bash
+   flask --app api.app db upgrade
+   ```
+
+   Jika folder `migrations/` belum ada di clone Anda (mis. clone baru
+   tanpa histori migrasi sebelumnya), jalankan dulu:
+
+   ```bash
+   flask --app api.app db init
+   flask --app api.app db migrate -m "Initial migration"
+   flask --app api.app db upgrade
+   ```
+
+4. Isi data awal (gejala, kondisi, aturan, rekomendasi):
+
+   ```bash
+   python seed.py
+   ```
+
+Jika koneksi PostgreSQL gagal (mis. server belum menyala), aplikasi
+akan tetap berjalan dan mencetak pesan error yang jelas di log --
+endpoint skrining tidak terpengaruh, hanya fitur yang butuh database
+yang belum bisa berfungsi.
+
 ## Menjalankan
 
 ```bash
 pip install -r requirements.txt
+
+createdb healin_db
+flask --app api.app db upgrade
+python seed.py
 
 # Demo cepat lewat terminal
 python demo.py
@@ -46,7 +99,8 @@ python demo.py
 pytest test_engine.py -v
 
 # Jalankan REST API (http://localhost:5000)
-python api/app.py
+flask run
+# atau: python api/app.py
 ```
 
 ## Catatan penting: kompatibilitas Experta
