@@ -87,7 +87,7 @@ except ImportError:  # fallback manual jika flask-cors belum terinstal
     def _add_cors_headers(response):
         response.headers["Access-Control-Allow-Origin"] = "*"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS"
         return response
 
 
@@ -215,6 +215,175 @@ def skrining():
         ),
         200,
     )
+
+
+# --------------------------------------------------------------------- #
+# Fitur Riwayat Pemeriksaan (History) -- ADITIF, membaca data yang sudah
+# tersimpan di tabel examination_history lewat _simpan_riwayat_pemeriksaan()
+# di atas. TIDAK menyentuh /api/gejala, /api/skrining, /api/health,
+# maupun rule engine Experta / algoritma Forward Chaining sama sekali.
+#
+# Catatan penting soal keamanan: sesuai catatan pada
+# _simpan_riwayat_pemeriksaan(), sistem login Heal.In saat ini masih
+# demo/frontend-only (localStorage, belum ada session/token backend).
+# Karena itu, "pengguna yang sedang login" pada endpoint di bawah
+# diidentifikasi lewat parameter ``user_email`` yang dikirim frontend
+# dari sesi localStorage (healinGetSession(), sama seperti pola yang
+# sudah dipakai /api/skrining). Validasi kepemilikan data (user hanya
+# bisa melihat/menghapus riwayat miliknya sendiri) TETAP ditegakkan di
+# backend dengan mencocokkan user_id pemilik riwayat terhadap user yang
+# terkait dengan user_email tersebut -- bukan sekadar mengandalkan
+# frontend.
+# --------------------------------------------------------------------- #
+
+INDO_MONTHS = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+]
+
+
+def _format_tanggal_indo(dt):
+    """Format datetime -> "20 Juli 2026" (dipakai untuk pencarian by tanggal)."""
+    return f"{dt.day} {INDO_MONTHS[dt.month - 1]} {dt.year}"
+
+
+def _get_user_by_email(email):
+    if not email:
+        return None
+    return User.query.filter_by(email=email).first()
+
+
+@app.route("/history", methods=["GET"])
+def get_history_list():
+    """Mengembalikan riwayat pemeriksaan milik pengguna yang sedang login
+    (diurutkan tanggal terbaru -> terlama), mendukung pencarian sederhana
+    (tanggal/kondisi) dan pagination supaya tidak memuat seluruh data
+    sekaligus."""
+    user_email = (request.args.get("user_email") or "").strip().lower()
+    if not user_email:
+        return jsonify({"error": "Pengguna belum login (user_email wajib diisi)."}), 401
+
+    try:
+        page = max(int(request.args.get("page", 1)), 1)
+    except (TypeError, ValueError):
+        page = 1
+    try:
+        per_page = max(min(int(request.args.get("per_page", 10)), 50), 1)
+    except (TypeError, ValueError):
+        per_page = 10
+
+    q = (request.args.get("q") or "").strip().lower()
+
+    user = _get_user_by_email(user_email)
+    if user is None:
+        # Belum pernah melakukan skrining sama sekali -> riwayat kosong.
+        return jsonify(
+            {"data": [], "page": 1, "per_page": per_page, "total": 0, "total_pages": 0}
+        ), 200
+
+    from sqlalchemy import desc
+
+    base_query = ExaminationHistory.query.filter_by(user_id=user.id)
+
+    if q:
+        # Pencarian mencakup nama kondisi maupun tanggal dalam format
+        # Indonesia (mis. "20 juli"). Karena data yang difilter hanya
+        # milik SATU pengguna (bukan seluruh tabel), jumlahnya kecil,
+        # jadi pencocokan tanggal dilakukan di Python setelah diambil
+        # dari database.
+        semua = base_query.order_by(desc(ExaminationHistory.examination_date)).all()
+        hasil_pencarian = [
+            r for r in semua
+            if q in r.detected_condition.lower()
+            or q in _format_tanggal_indo(r.examination_date).lower()
+        ]
+        total = len(hasil_pencarian)
+        total_pages = max((total + per_page - 1) // per_page, 1)
+        page = min(page, total_pages)
+        items = hasil_pencarian[(page - 1) * per_page: (page - 1) * per_page + per_page]
+    else:
+        ordered_query = base_query.order_by(desc(ExaminationHistory.examination_date))
+        total = ordered_query.count()
+        total_pages = max((total + per_page - 1) // per_page, 1)
+        page = min(page, total_pages)
+        items = ordered_query.offset((page - 1) * per_page).limit(per_page).all()
+
+    data = [
+        {
+            "id": r.id,
+            "examination_date": r.examination_date.isoformat(),
+            "detected_condition": r.detected_condition,
+            "severity": r.severity,
+            "recommendation_summary": (r.recommendation or [None])[0],
+        }
+        for r in items
+    ]
+
+    return jsonify(
+        {"data": data, "page": page, "per_page": per_page, "total": total, "total_pages": total_pages}
+    ), 200
+
+
+@app.route("/history/<int:history_id>", methods=["GET"])
+def get_history_detail(history_id):
+    """Mengembalikan detail satu riwayat pemeriksaan, HANYA apabila
+    riwayat tersebut milik pengguna yang sedang login."""
+    user_email = (request.args.get("user_email") or "").strip().lower()
+    if not user_email:
+        return jsonify({"error": "Pengguna belum login (user_email wajib diisi)."}), 401
+
+    user = _get_user_by_email(user_email)
+    if user is None:
+        return jsonify({"error": "Pengguna tidak ditemukan."}), 404
+
+    riwayat = ExaminationHistory.query.get(history_id)
+    if riwayat is None:
+        return jsonify({"error": "Riwayat tidak ditemukan."}), 404
+    if riwayat.user_id != user.id:
+        # Mencegah user membuka history milik pengguna lain lewat
+        # perubahan URL (mis. /history/5 -> /history/6).
+        return jsonify({"error": "Anda tidak memiliki akses ke riwayat ini."}), 403
+
+    return jsonify(
+        {
+            "id": riwayat.id,
+            "examination_date": riwayat.examination_date.isoformat(),
+            "user_full_name": user.full_name,
+            "detected_condition": riwayat.detected_condition,
+            "severity": riwayat.severity,
+            "selected_symptoms": riwayat.selected_symptoms,
+            "explanation_trace": riwayat.explanation_trace,
+            "recommendation": riwayat.recommendation,
+        }
+    ), 200
+
+
+@app.route("/history/<int:history_id>", methods=["DELETE"])
+def delete_history(history_id):
+    """Menghapus satu riwayat pemeriksaan, HANYA apabila riwayat
+    tersebut milik pengguna yang sedang login."""
+    user_email = (request.args.get("user_email") or "").strip().lower()
+    if not user_email:
+        return jsonify({"error": "Pengguna belum login (user_email wajib diisi)."}), 401
+
+    user = _get_user_by_email(user_email)
+    if user is None:
+        return jsonify({"error": "Pengguna tidak ditemukan."}), 404
+
+    riwayat = ExaminationHistory.query.get(history_id)
+    if riwayat is None:
+        return jsonify({"error": "Riwayat tidak ditemukan."}), 404
+    if riwayat.user_id != user.id:
+        return jsonify({"error": "Anda tidak memiliki akses untuk menghapus riwayat ini."}), 403
+
+    try:
+        db.session.delete(riwayat)
+        db.session.commit()
+    except Exception as exc:  # noqa: BLE001
+        db.session.rollback()
+        return jsonify({"error": f"Gagal menghapus riwayat: {exc}"}), 500
+
+    return jsonify({"message": "Riwayat berhasil dihapus."}), 200
 
 
 @app.route("/api/health", methods=["GET"])

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riwayat Pemeriksaan — Heal.In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<script src="js/auth.js"></script>
+<script>
+  // Gerbang: halaman ini wajib login, sama seperti questionnaire.html/result.html.
+  healinRequireAuth();
+</script>
+
+<nav class="navbar navbar-healin">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 24 24"><path fill="#2f6140" d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2 4.5 5.4 3.7c2-.5 4 .3 5.1 2 .9-1.7 2.9-2.5 5-2 3.4.8 5 4.4 3.4 8C19.5 16.4 12 21 12 21z"/></svg>
+      Heal.In
+    </a>
+    <a href="index.html" class="btn-healin-outline">Kembali ke Beranda</a>
+  </div>
+</nav>
+
+<main class="section-tight">
+  <div class="container" style="max-width: 960px;">
+
+    <p class="eyebrow mb-2">Riwayat</p>
+    <h1 class="display h3 mb-1">Riwayat Pemeriksaan Anda</h1>
+    <p class="text-muted mb-4">Lihat kembali seluruh hasil skrining yang pernah Anda lakukan.</p>
+
+    <div class="riwayat-toolbar">
+      <div class="riwayat-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="searchInput" placeholder="Cari berdasarkan tanggal atau kondisi...">
+      </div>
+    </div>
+
+    <!-- Loading skeleton -->
+    <div id="loadingState" class="riwayat-grid">
+      <div class="skeleton" style="height:170px;"></div>
+      <div class="skeleton" style="height:170px;"></div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="emptyState" class="riwayat-empty d-none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>
+      </svg>
+      <h2>Belum ada riwayat pemeriksaan.</h2>
+      <p>Silakan lakukan skrining pertama Anda.</p>
+      <a href="questionnaire.html" class="btn-healin">Mulai Skrining</a>
+    </div>
+
+    <!-- Empty search result -->
+    <div id="emptySearchState" class="riwayat-empty d-none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <h2>Tidak ada hasil.</h2>
+      <p>Coba kata kunci lain, misalnya nama kondisi atau tanggal.</p>
+    </div>
+
+    <!-- List state -->
+    <div id="listState" class="d-none">
+      <div class="riwayat-grid" id="riwayatGrid"></div>
+      <div class="riwayat-pagination" id="paginationBar"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Modal konfirmasi hapus -->
+<div class="riwayat-modal-overlay d-none" id="confirmModal">
+  <div class="riwayat-modal">
+    <h3>Hapus riwayat ini?</h3>
+    <p>Apakah Anda yakin ingin menghapus riwayat ini?</p>
+    <div class="riwayat-modal-actions">
+      <button class="btn-batal" id="btnBatalHapus">Batal</button>
+      <button class="btn-konfirmasi-hapus" id="btnKonfirmasiHapus">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div class="riwayat-toast" id="toast">Riwayat berhasil dihapus.</div>
+
+<script src="js/api.js"></script>
+<script src="js/history.js"></script>
+</body>
+</html>

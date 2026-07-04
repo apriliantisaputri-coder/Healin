@@ -438,3 +438,152 @@ footer.footer-healin .social-icon svg { width: 18px; height: 18px; }
   background-size: 400% 100%; animation: shimmer 1.4s ease infinite; border-radius: var(--radius-md);
 }
 @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+/* =========================================================
+   RIWAYAT PEMERIKSAAN (History) -- ADITIF
+   Blok baru di akhir file ini, tidak mengubah aturan CSS
+   yang sudah ada di atas (Global/homepage/login/questionnaire/
+   result tetap persis seperti sebelumnya).
+   ========================================================= */
+
+.riwayat-toolbar {
+  display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;
+  justify-content: space-between; margin-bottom: 1.8rem;
+}
+.riwayat-search {
+  position: relative; flex: 1 1 280px; max-width: 360px;
+}
+.riwayat-search input {
+  width: 100%; border: 1.5px solid var(--border-soft); border-radius: 999px;
+  padding: .65rem 1.1rem .65rem 2.4rem; font-size: .92rem; background: #fff;
+  transition: border-color .15s;
+}
+.riwayat-search input:focus { outline: none; border-color: var(--light-green); }
+.riwayat-search svg {
+  position: absolute; left: .85rem; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; color: var(--text-gray);
+}
+
+.riwayat-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.4rem;
+}
+.riwayat-card {
+  background: var(--card-bg); border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg); padding: 1.5rem 1.6rem;
+  box-shadow: 0 10px 30px -24px rgba(53,95,46,.35);
+  display: flex; flex-direction: column; gap: .5rem;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.riwayat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft); }
+.riwayat-card-head {
+  display: flex; align-items: center; justify-content: space-between; gap: .6rem; flex-wrap: wrap;
+}
+.riwayat-tanggal { font-size: .82rem; color: var(--text-gray); font-weight: 500; }
+.riwayat-badge {
+  font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  padding: .25rem .7rem; border-radius: 999px; display: inline-block; white-space: nowrap;
+}
+.riwayat-badge.normal    { background: #DCEBD9; color: var(--primary); }
+.riwayat-badge.ringan    { background: #F3EBC8; color: #8a6d1c; }
+.riwayat-badge.berat     { background: #F4DCC8; color: #a35318; }
+.riwayat-badge.kecemasan { background: #D6E9F8; color: #1f5c8a; }
+.riwayat-badge.depresi   { background: #F3D3D3; color: #a33333; }
+.riwayat-kondisi { font-family: var(--font-display); font-size: 1.15rem; margin: 0; color: var(--primary-dark); }
+.riwayat-ringkasan { color: var(--text-gray); font-size: .92rem; margin: 0; flex-grow: 1; }
+.riwayat-actions { display: flex; gap: .7rem; margin-top: .6rem; flex-wrap: wrap; }
+.riwayat-actions .btn-healin-outline,
+.riwayat-actions .btn-hapus { padding: .5rem 1.1rem; font-size: .85rem; }
+.btn-hapus {
+  border: 1.5px solid #e3b3b3; color: #a33333; background: #fff;
+  border-radius: 999px; font-weight: 600; cursor: pointer; transition: background .15s, transform .15s;
+}
+.btn-hapus:hover { background: #F3D3D3; transform: translateY(-2px); }
+
+.riwayat-pagination {
+  display: flex; align-items: center; justify-content: center; gap: .5rem; margin-top: 2.2rem; flex-wrap: wrap;
+}
+.riwayat-pagination button {
+  border: 1.5px solid var(--border-soft); background: #fff; border-radius: 10px;
+  padding: .45rem .85rem; font-size: .88rem; font-weight: 600; color: var(--text-dark); cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.riwayat-pagination button.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.riwayat-pagination button:disabled { opacity: .4; cursor: not-allowed; }
+.riwayat-pagination button:not(:disabled):hover { border-color: var(--light-green); }
+
+.riwayat-empty {
+  text-align: center; padding: 3rem 1rem; max-width: 420px; margin: 0 auto;
+}
+.riwayat-empty svg { width: 96px; height: 96px; color: var(--light-green); margin-bottom: 1.2rem; }
+.riwayat-empty h2 { font-size: 1.2rem; margin-bottom: .5rem; }
+.riwayat-empty p { color: var(--text-gray); margin-bottom: 1.4rem; }
+
+/* Modal konfirmasi hapus (custom, ringan, tanpa dependensi Bootstrap JS) */
+.riwayat-modal-overlay {
+  position: fixed; inset: 0; background: rgba(30,58,26,.35);
+  display: flex; align-items: center; justify-content: center; z-index: 1050;
+  padding: 1rem;
+}
+.riwayat-modal-overlay.d-none { display: none; }
+.riwayat-modal {
+  background: #fff; border-radius: var(--radius-lg); padding: 1.8rem; max-width: 380px; width: 100%;
+  box-shadow: var(--shadow-soft); text-align: center;
+}
+.riwayat-modal h3 { font-size: 1.1rem; margin-bottom: .6rem; }
+.riwayat-modal p { color: var(--text-gray); font-size: .92rem; margin-bottom: 1.4rem; }
+.riwayat-modal-actions { display: flex; gap: .8rem; justify-content: center; }
+.riwayat-modal-actions button { flex: 1; padding: .6rem 1rem; }
+.btn-batal {
+  border: 1.5px solid var(--border-soft); background: #fff; border-radius: 999px;
+  font-weight: 600; cursor: pointer; color: var(--text-dark);
+}
+.btn-konfirmasi-hapus {
+  border: none; background: #a33333; color: #fff; border-radius: 999px;
+  font-weight: 600; cursor: pointer; transition: background .15s;
+}
+.btn-konfirmasi-hapus:hover { background: #822929; }
+
+/* Notifikasi toast ringan */
+.riwayat-toast {
+  position: fixed; bottom: 1.6rem; left: 50%; transform: translate(-50%, 20px);
+  background: var(--primary-dark); color: #fff; padding: .8rem 1.4rem; border-radius: 999px;
+  font-size: .9rem; font-weight: 500; box-shadow: var(--shadow-soft); z-index: 1100;
+  opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease;
+}
+.riwayat-toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+
+/* Timeline explanation trace (halaman detail) */
+.riwayat-timeline { list-style: none; padding: 0; margin: 0 0 1.6rem; }
+.riwayat-timeline li {
+  position: relative; padding: 0 0 1.3rem 1.8rem; border-left: 2px solid var(--border-soft);
+  margin-left: .5rem;
+}
+.riwayat-timeline li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.riwayat-timeline li::before {
+  content: ""; position: absolute; left: -7px; top: 2px; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--light-green); border: 2px solid #fff; box-shadow: 0 0 0 2px var(--light-green);
+}
+.riwayat-timeline li.final::before { background: var(--primary); box-shadow: 0 0 0 2px var(--primary); }
+.riwayat-timeline .rule-code { font-weight: 700; color: var(--primary-dark); }
+.riwayat-timeline .rule-desc { color: var(--text-gray); font-size: .9rem; margin-top: .15rem; }
+
+.riwayat-gejala-list { list-style: none; padding: 0; margin: 0 0 1.6rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem; }
+.riwayat-gejala-list li {
+  display: flex; align-items: center; gap: .55rem; font-size: .92rem; color: var(--text-dark);
+}
+.riwayat-gejala-list li svg { width: 16px; height: 16px; color: var(--primary); flex-shrink: 0; }
+
+.riwayat-info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem 1.6rem; margin-bottom: 1.8rem; }
+.riwayat-info-item .label { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-gray); font-weight: 700; margin-bottom: .2rem; }
+.riwayat-info-item .value { font-size: 1rem; font-weight: 600; color: var(--text-dark); }
+
+/* ---------- Responsive Riwayat ----------
+   Desktop & laptop (>991px): 2 kartu per baris.
+   Tablet & mobile (<=991px): 1 kartu per baris. */
+@media (max-width: 991.98px) {
+  .riwayat-grid { grid-template-columns: 1fr; }
+  .riwayat-gejala-list { grid-template-columns: 1fr; }
+  .riwayat-info-grid { grid-template-columns: 1fr; }
+  .riwayat-toolbar { flex-direction: column; align-items: stretch; }
+  .riwayat-search { max-width: none; }
+}

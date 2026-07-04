@@ -35,3 +35,49 @@ async function apiPostSkrining(daftarGejala, user) {
   }
   return data;
 }
+
+/* =========================================================
+   RIWAYAT PEMERIKSAAN (History) — ADITIF, tidak mengubah
+   fungsi apiPostSkrining/apiGetDaftarGejala di atas.
+   Mengikuti pola yang sama: kirim user_email dari sesi
+   localStorage (healinGetSession()) supaya backend tahu
+   riwayat siapa yang boleh diakses.
+   ========================================================= */
+
+async function apiGetHistoryList(userEmail, { page = 1, perPage = 10, q = "" } = {}) {
+  const params = new URLSearchParams({ user_email: userEmail, page, per_page: perPage });
+  if (q) params.set("q", q);
+
+  const res = await fetch(`${API_BASE_URL}/history?${params.toString()}`);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Gagal mengambil riwayat pemeriksaan");
+  }
+  return data;
+}
+
+async function apiGetHistoryDetail(userEmail, historyId) {
+  const params = new URLSearchParams({ user_email: userEmail });
+  const res = await fetch(`${API_BASE_URL}/history/${historyId}?${params.toString()}`);
+  const data = await res.json();
+  if (!res.ok) {
+    const err = new Error(data.error || "Gagal mengambil detail riwayat");
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
+async function apiDeleteHistory(userEmail, historyId) {
+  const params = new URLSearchParams({ user_email: userEmail });
+  const res = await fetch(`${API_BASE_URL}/history/${historyId}?${params.toString()}`, {
+    method: "DELETE",
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    const err = new Error(data.error || "Gagal menghapus riwayat");
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}

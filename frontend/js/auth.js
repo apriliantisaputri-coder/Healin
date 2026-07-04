@@ -63,6 +63,14 @@ function healinRequireAuth() {
  * status sesi saat ini.
  */
 function healinInitNavAuthState() {
+  // Menu "Riwayat" (jika ada di halaman ini) hanya tampil saat sudah
+  // login -- elemen ini opsional, jadi aman dipanggil di halaman yang
+  // tidak punya menu tersebut (mis. sign-in.html, questionnaire.html).
+  const riwayatNavItem = document.getElementById("riwayatNavItem");
+  if (riwayatNavItem) {
+    riwayatNavItem.classList.toggle("d-none", !healinGetSession());
+  }
+
   const slot = document.getElementById("authNavSlot");
   if (!slot) return;
   const session = healinGetSession();
