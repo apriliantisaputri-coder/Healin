@@ -1,3 +1,11 @@
+// Catat waktu mulai pengisian formulir (ADITIF, tidak mengubah logic
+// wizard/step di bawah). Dipakai murni untuk menampilkan "Durasi Skrining"
+// di halaman result.html -- kalau key ini sudah ada (mis. user reload
+// halaman di tengah pengisian), tidak ditimpa supaya durasi tetap akurat.
+if (!sessionStorage.getItem("healin_start_time")) {
+  sessionStorage.setItem("healin_start_time", String(Date.now()));
+}
+
 const TOTAL_STEP = 4;
 let currentStep = 1;
 
@@ -74,7 +82,17 @@ form.addEventListener("submit", async (e) => {
   try {
     const session = healinGetSession(); // dari js/auth.js, sudah dimuat di questionnaire.html
     const hasil = await apiPostSkrining(dipilih, session);
-    sessionStorage.setItem("healin_hasil", JSON.stringify({ ...hasil, gejala_dipilih: dipilih }));
+
+    // Durasi skrining (detik) -- ADITIF, hanya dipakai untuk ditampilkan
+    // di result.html, tidak memengaruhi payload yang dikirim ke API.
+    const mulai = Number(sessionStorage.getItem("healin_start_time")) || Date.now();
+    const durasiDetik = Math.max(0, Math.round((Date.now() - mulai) / 1000));
+
+    sessionStorage.setItem(
+      "healin_hasil",
+      JSON.stringify({ ...hasil, gejala_dipilih: dipilih, durasi_detik: durasiDetik, waktu_selesai: Date.now() })
+    );
+    sessionStorage.removeItem("healin_start_time");
     window.location.href = "result.html";
   } catch (err) {
     errorBox.textContent = `Gagal terhubung ke server: ${err.message}. Pastikan backend Flask sudah berjalan di ${API_BASE_URL}.`;

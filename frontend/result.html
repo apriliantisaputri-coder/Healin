@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hasil Skrining — Heal.In</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -16,47 +16,199 @@
   healinRequireAuth();
 </script>
 
-<nav class="navbar navbar-healin">
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg navbar-healin sticky-top">
   <div class="container">
     <a class="brand" href="index.html">
-      <svg viewBox="0 0 24 24"><path fill="#2f6140" d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2 4.5 5.4 3.7c2-.5 4 .3 5.1 2 .9-1.7 2.9-2.5 5-2 3.4.8 5 4.4 3.4 8C19.5 16.4 12 21 12 21z"/></svg>
-      Heal.In
+      <span class="logo-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#355F2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2 4.5 5.4 3.7c2-.5 4 .3 5.1 2 .9-1.7 2.9-2.5 5-2 3.4.8 5 4.4 3.4 8C19.5 16.4 12 21 12 21z" fill="#355F2E" stroke="none"/>
+          <path d="M3 12h4l1.5-3L11 15l1.5-5 1.2 2.5H21" stroke="#EAF7A6" stroke-width="1.6"/>
+        </svg>
+      </span>
+      <span>
+        Heal. In
+        <span class="brand-sub">Mental Health Checker</span>
+      </span>
     </a>
-    <a href="index.html" class="btn-healin-outline">Kembali ke Beranda</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav mx-lg-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link" href="index.html">Beranda</a></li>
+        <li class="nav-item"><a class="nav-link" href="questionnaire.html">Pemeriksaan</a></li>
+        <li class="nav-item d-none" id="riwayatNavItem"><a class="nav-link active" href="history.html">Riwayat</a></li>
+      </ul>
+      <div id="authNavSlot" class="d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0"></div>
+    </div>
   </div>
 </nav>
 
 <main class="section-tight">
-  <div class="container" style="max-width: 720px;">
+  <div class="container hd-shell">
 
     <div id="loadingState">
       <p class="eyebrow mb-2">Hasil Skrining</p>
-      <div class="skeleton mb-3" style="height:2.2rem; width:60%;"></div>
-      <div class="skeleton mb-2" style="height:1rem; width:90%;"></div>
-      <div class="skeleton" style="height:1rem; width:75%;"></div>
+      <div class="skeleton mb-3" style="height:2.2rem; width:40%;"></div>
+      <div class="skeleton mb-2" style="height:1rem; width:60%;"></div>
+      <div class="skeleton" style="height:220px; width:100%;"></div>
     </div>
 
     <div id="resultState" class="d-none">
-      <p class="eyebrow mb-2">Hasil Skrining</p>
-      <span class="hasil-badge" id="kondisiBadge">—</span>
-      <p class="text-muted mt-2 mb-4" id="skorText"></p>
 
-      <div class="alert-disclaimer mb-4">
-        Hasil ini merupakan identifikasi awal berdasarkan aturan sistem pakar, <strong>bukan diagnosis klinis</strong>.
-        Untuk kepastian lebih lanjut, konsultasikan dengan psikolog atau konselor profesional.
+      <div class="hd-topbar">
+        <div>
+          <p class="eyebrow mb-1">Hasil Skrining</p>
+          <h1 class="display">Hasil Skrining</h1>
+          <p>Berikut adalah hasil analisis berdasarkan jawaban yang Anda berikan menggunakan sistem pakar berbasis Forward Chaining.</p>
+        </div>
+        <div class="hd-actions">
+          <button id="btnDownloadPdf" class="btn-healin-outline">⬇ Unduh Hasil PDF</button>
+          <button id="btnSaveHistory" class="btn-healin">Simpan ke Riwayat</button>
+        </div>
       </div>
 
-      <h2 class="h6 mb-2">Alur Penalaran Sistem</h2>
-      <p class="small text-muted mb-3">Berikut aturan IF-THEN yang aktif selama proses inferensi (explanation trace):</p>
-      <div id="traceList" class="mb-4"></div>
+      <div class="hd-grid">
+        <!-- ================= LEFT COLUMN ================= -->
+        <div class="hd-col-stack">
 
-      <h2 class="h6 mb-2">Rekomendasi Tindak Lanjut</h2>
-      <ul id="rekomendasiList" class="mb-4"></ul>
+          <!-- CARD 1: Ringkasan Hasil -->
+          <div class="hd-card">
+            <h2>Ringkasan Hasil</h2>
+            <div class="hd-summary-grid">
+              <div>
+                <div class="hd-kondisi-label">Kondisi Terdeteksi</div>
+                <div class="hd-kondisi-value" id="kondisiValue">—</div>
+                <span class="hd-risk-badge" id="riskBadge">—</span>
+                <p class="hd-summary-text" id="summaryText"></p>
+              </div>
+              <div>
+                <div class="hd-score-label">Skor Keseluruhan</div>
+                <div class="hd-score-value" id="scoreValue">0<span>/100</span></div>
+                <div class="hd-bar-track"><div class="hd-bar-fill" id="scoreBar"></div></div>
 
-      <div class="d-flex flex-wrap gap-3">
-        <a href="questionnaire.html" class="btn-healin">Ulangi Pemeriksaan</a>
-        <a href="index.html" class="btn-healin-outline">Kembali ke Beranda</a>
+                <div class="hd-score-label" style="margin-top:1rem;">Confidence Level</div>
+                <div class="hd-score-value" id="confValue" style="font-size:1.3rem;">0<span>%</span></div>
+                <div class="hd-bar-track"><div class="hd-bar-fill" id="confBar" style="background:var(--secondary);"></div></div>
+
+                <div class="hd-mini-stat"><span>Tanggal Pemeriksaan</span><strong id="statTanggal">—</strong></div>
+                <div class="hd-mini-stat"><span>Durasi Skrining</span><strong id="statDurasi">—</strong></div>
+                <div class="hd-mini-stat"><span>Jumlah Gejala Dipilih</span><strong id="statJumlah">—</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2: Profil Kesehatan Mental -->
+          <div class="hd-card">
+            <h2>Profil Kesehatan Mental <span class="hd-info" title="Skor tiap dimensi dihitung dari gejala yang Anda pilih (0 = tidak ada indikasi, 100 = indikasi kuat).">ⓘ</span></h2>
+            <div class="hd-radar-row">
+              <div>
+                <div class="hd-radar-svg-wrap">
+                  <div class="hd-radar-wrap" id="radarWrap"></div>
+                  <div class="hd-radar-tooltip" id="radarTooltip"></div>
+                </div>
+                <div class="hd-legend" id="radarLegend"></div>
+              </div>
+              <div class="hd-mini-scores" id="miniScores"></div>
+            </div>
+            <div class="hd-insight" id="radarInsight"></div>
+          </div>
+
+          <!-- CARD 4: Gejala yang Dipilih -->
+          <div class="hd-card">
+            <h2>Gejala yang Dipilih</h2>
+            <div class="hd-gejala-grid" id="gejalaGrid"></div>
+            <div class="hd-gejala-total">Total gejala dipilih: <strong id="gejalaTotal">0 dari 13</strong></div>
+          </div>
+
+        </div>
+
+        <!-- ================= RIGHT COLUMN ================= -->
+        <div class="hd-col-stack">
+
+          <!-- CARD 3: Explanation Trace -->
+          <div class="hd-card">
+            <h2>Explanation Trace <span class="hd-trace-badge">Forward Chaining</span></h2>
+            <div class="hd-timeline" id="timeline"></div>
+
+            <div class="hd-final-card" id="finalCard">
+              <div class="hd-kondisi-label">Kesimpulan Akhir</div>
+              <div class="kondisi" id="finalKondisi">—</div>
+              <div class="hd-final-stats">
+                <div><div class="num" id="statConfidence">—</div><div class="lbl">Confidence</div></div>
+                <div><div class="num" id="statRuleAktif">—</div><div class="lbl">Rule aktif</div></div>
+                <div><div class="num" id="statRuleDiperiksa">—</div><div class="lbl">Rule diperiksa</div></div>
+                <div><div class="num" id="statRuleGagal">—</div><div class="lbl">Rule gagal</div></div>
+              </div>
+              <span class="hd-fc-badge">✓ Forward Chaining Complete</span>
+            </div>
+
+            <div class="hd-trace-legend">
+              <span><i style="background:#2f8f4e;"></i>Rule terpenuhi</span>
+              <span><i style="background:#b9bfb4;"></i>Tidak terpenuhi</span>
+              <span><i style="background:#7a4fc9;"></i>Kesimpulan</span>
+            </div>
+
+            <button id="btnLihatSemuaRule" class="btn-healin-outline mt-3">Lihat Semua Rule</button>
+          </div>
+
+          <!-- CARD 5: Analisis AI -->
+          <div class="hd-card">
+            <h2>🤖 Analisis Sistem</h2>
+            <p class="hd-summary-text" id="aiNarasi"></p>
+            <div class="hd-ai-highlights">
+              <div class="hd-ai-highlight"><div class="lbl">Faktor Dominan</div><div class="val" id="aiFaktorDominan">—</div></div>
+              <div class="hd-ai-highlight"><div class="lbl">Trend Risiko</div><div class="val" id="aiTrend">—</div></div>
+              <div class="hd-ai-highlight"><div class="lbl">Prioritas Penanganan</div><div class="val" id="aiPrioritas">—</div></div>
+            </div>
+          </div>
+
+          <!-- CARD 6: Rekomendasi Personal -->
+          <div class="hd-card">
+            <h2>Rekomendasi Personal</h2>
+            <div class="hd-rekom-grid" id="rekomGrid"></div>
+          </div>
+
+          <!-- CARD 7: Perbandingan -->
+          <div class="hd-card">
+            <h2>Perbandingan dengan Skrining Sebelumnya</h2>
+            <div id="comparisonBody"><div class="hd-empty-note">Memuat riwayat…</div></div>
+          </div>
+
+          <!-- CARD 8: Faktor Berpengaruh -->
+          <div class="hd-card">
+            <h2>Faktor yang Paling Berpengaruh</h2>
+            <div id="factorBars"></div>
+          </div>
+
+          <!-- CARD 9: Confidence Gauge -->
+          <div class="hd-card">
+            <h2>Tingkat Keyakinan Sistem</h2>
+            <div class="hd-gauge-wrap">
+              <div id="gaugeSvgWrap"></div>
+              <div class="hd-gauge-num" id="gaugeNum">0%</div>
+              <div class="hd-gauge-lbl" id="gaugeLbl">—</div>
+              <p class="hd-gauge-desc" id="gaugeDesc"></p>
+            </div>
+          </div>
+
+        </div>
       </div>
+
+      <!-- Bottom reminder -->
+      <div class="hd-reminder">
+        <div class="left">
+          <div class="icon">🧠</div>
+          <p>Kesehatan mental sama pentingnya dengan kesehatan fisik. Jangan ragu mencari bantuan profesional bila diperlukan.</p>
+        </div>
+        <div class="actions">
+          <a href="questionnaire.html" class="btn-healin-outline">Lakukan Skrining Lagi</a>
+          <a href="history.html" class="btn-healin-outline">Lihat Riwayat</a>
+          <button id="btnDownloadPdf2" class="btn-healin">Unduh PDF</button>
+        </div>
+      </div>
+
     </div>
 
     <div id="emptyState" class="d-none">
@@ -69,55 +221,26 @@
   </div>
 </main>
 
-<script>
-const TINGKAT_STYLE = {
-  "Normal":          { badgeBg: "#DCEBD9", badgeColor: "#21492c" },
-  "Stres Ringan":    { badgeBg: "#F3EBC8", badgeColor: "#8a6d1c" },
-  "Stres Berat":     { badgeBg: "#F4DCC8", badgeColor: "#a35318" },
-  "Kecemasan":       { badgeBg: "#E4D9F3", badgeColor: "#5f3aa3" },
-  "Potensi Depresi": { badgeBg: "#F3D3D3", badgeColor: "#a33333" },
-};
+<!-- Modal: Lihat Semua Rule -->
+<div class="hd-modal-overlay d-none" id="ruleModalOverlay">
+  <div class="hd-modal">
+    <div class="hd-modal-head">
+      <h3>Seluruh Proses Inferensi (24 Rule)</h3>
+      <button class="hd-modal-close" id="ruleModalClose">&times;</button>
+    </div>
+    <div class="hd-modal-filters" id="ruleFilters">
+      <button class="hd-mfilter active" data-filter="semua">Semua Rule</button>
+      <button class="hd-mfilter" data-filter="terpenuhi">Terpenuhi</button>
+      <button class="hd-mfilter" data-filter="tidak">Tidak Terpenuhi</button>
+      <button class="hd-mfilter" data-filter="diagnosis">Diagnosis</button>
+    </div>
+    <div class="hd-modal-body" id="ruleModalBody"></div>
+  </div>
+</div>
 
-function render() {
-  const raw = sessionStorage.getItem("healin_hasil");
-  document.getElementById("loadingState").classList.add("d-none");
+<div class="riwayat-toast" id="toast"></div>
 
-  if (!raw) {
-    document.getElementById("emptyState").classList.remove("d-none");
-    return;
-  }
-
-  const hasil = JSON.parse(raw);
-  document.getElementById("resultState").classList.remove("d-none");
-
-  const badge = document.getElementById("kondisiBadge");
-  badge.textContent = hasil.kondisi;
-  const style = TINGKAT_STYLE[hasil.kondisi] || TINGKAT_STYLE["Normal"];
-  badge.style.background = style.badgeBg;
-  badge.style.color = style.badgeColor;
-
-  document.getElementById("skorText").textContent =
-    `Skor keparahan: ${hasil.skor} · berdasarkan ${hasil.gejala_dipilih.length} gejala yang dipilih`;
-
-  const traceList = document.getElementById("traceList");
-  traceList.innerHTML = "";
-  hasil.explanation_trace.forEach((jejak) => {
-    const div = document.createElement("div");
-    div.className = "trace-item";
-    div.innerHTML = `<strong>${jejak.kondisi}</strong> (skor ${jejak.skor})<br><code>${jejak.aturan}</code>`;
-    traceList.appendChild(div);
-  });
-
-  const rekomendasiList = document.getElementById("rekomendasiList");
-  rekomendasiList.innerHTML = "";
-  hasil.rekomendasi.forEach((saran) => {
-    const li = document.createElement("li");
-    li.textContent = saran;
-    rekomendasiList.appendChild(li);
-  });
-}
-
-render();
-</script>
+<script src="js/api.js"></script>
+<script src="js/result.js"></script>
 </body>
 </html>
