@@ -18,8 +18,7 @@ class KecemasanRules:
         self._catat(
             "Kecemasan",
             30,
-            "IF cemas_berlebihan AND sulit_tidur AND mudah_marah THEN "
-            "Kecemasan",
+            "IF cemas_berlebihan AND sulit_tidur AND mudah_marah THEN " "Kecemasan",
         )
 
     @Rule(
@@ -28,9 +27,7 @@ class KecemasanRules:
         salience=SALIENCE_KECEMASAN,
     )
     def kecemasan_2(self):
-        self._catat(
-            "Kecemasan", 26, "IF cemas_berlebihan AND sakit_kepala THEN Kecemasan"
-        )
+        self._catat("Kecemasan", 26, "IF cemas_berlebihan AND sakit_kepala THEN Kecemasan")
 
     @Rule(
         Gejala(nama="cemas_berlebihan"),
@@ -50,9 +47,7 @@ class KecemasanRules:
         salience=SALIENCE_KECEMASAN,
     )
     def kecemasan_4(self):
-        self._catat(
-            "Kecemasan", 28, "IF cemas_berlebihan AND menarik_diri THEN Kecemasan"
-        )
+        self._catat("Kecemasan", 28, "IF cemas_berlebihan AND menarik_diri THEN Kecemasan")
 
     @Rule(
         Gejala(nama="cemas_berlebihan"),
@@ -64,6 +59,5 @@ class KecemasanRules:
         self._catat(
             "Kecemasan",
             30,
-            "IF cemas_berlebihan AND mudah_lupa AND sulit_konsentrasi THEN "
-            "Kecemasan",
+            "IF cemas_berlebihan AND mudah_lupa AND sulit_konsentrasi THEN " "Kecemasan",
         )

@@ -18,8 +18,7 @@ class DepresiRules:
         self._catat(
             "Potensi Depresi",
             48,
-            "IF sedih_berkepanjangan AND kehilangan_motivasi THEN Potensi "
-            "Depresi",
+            "IF sedih_berkepanjangan AND kehilangan_motivasi THEN Potensi " "Depresi",
         )
 
     @Rule(
@@ -32,8 +31,7 @@ class DepresiRules:
         self._catat(
             "Potensi Depresi",
             50,
-            "IF putus_asa AND kehilangan_motivasi AND menarik_diri THEN "
-            "Potensi Depresi",
+            "IF putus_asa AND kehilangan_motivasi AND menarik_diri THEN " "Potensi Depresi",
         )
 
     @Rule(

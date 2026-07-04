@@ -8,6 +8,7 @@ Fungsi ini WAJIB dipanggil sebelum `import experta` di seluruh proyek
 apabila dijalankan pada Python 3.10 ke atas (termasuk Python 3.11/3.12
 yang menjadi target proyek Heal.In).
 """
+
 import collections
 import collections.abc
 

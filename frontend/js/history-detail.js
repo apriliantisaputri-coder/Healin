@@ -125,7 +125,7 @@ async function init() {
   }
 
   try {
-    const data = await apiGetHistoryDetail(session.email, id);
+    const data = await apiGetHistoryDetail(id);
     render(data);
   } catch (err) {
     if (err.status === 403) {

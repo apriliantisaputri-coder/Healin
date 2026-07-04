@@ -16,6 +16,7 @@ Berisi dua kelompok model:
    PostgreSQL, TANPA mengubah rule engine Experta maupun endpoint API
    yang sudah berjalan (/api/gejala, /api/skrining, /api/health).
 """
+
 from datetime import datetime
 
 from sqlalchemy import (
@@ -86,9 +87,17 @@ class User(db.Model):
     age = Column(Integer, nullable=True)
     study_program = Column(String(150), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    # --- Autentikasi backend (token sesi) ---------------------------------
+    # Kolom ini ADITIF: menambah fondasi autentikasi asli (register/login
+    # dengan password ter-hash + token sesi) sesuai yang dideskripsikan pada
+    # laporan Bab III.d & Bab IV.5. Tidak menghapus/mengubah kolom lain di
+    # atas. Token bersifat single-session sederhana (satu token aktif per
+    # user); cukup untuk kebutuhan proyek ini tanpa menambah dependensi
+    # JWT/Redis tambahan (lihat Bab 1.4 - ruang lingkup: tanpa Redis).
+    auth_token = Column(String(255), unique=True, nullable=True, index=True)
+    token_expires_at = Column(DateTime, nullable=True)
 
     examination_history = relationship(
         "ExaminationHistory", back_populates="user", cascade="all, delete-orphan"
@@ -122,9 +131,7 @@ class Condition(db.Model):
     severity = Column(String(50), nullable=True)
     description = Column(Text, nullable=True)
 
-    rules = relationship(
-        "Rule", back_populates="condition", cascade="all, delete-orphan"
-    )
+    rules = relationship("Rule", back_populates="condition", cascade="all, delete-orphan")
     recommendations = relationship(
         "Recommendation", back_populates="condition", cascade="all, delete-orphan"
     )

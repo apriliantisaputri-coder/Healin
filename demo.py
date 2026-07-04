@@ -4,6 +4,7 @@ Demo baris perintah: mereplikasi skenario "Andi" pada proposal
 
 Jalankan: python demo.py
 """
+
 from engine.knowledge_engine import run_inference
 from rules.rekomendasi import get_rekomendasi
 

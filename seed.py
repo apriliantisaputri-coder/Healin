@@ -13,6 +13,7 @@ dan TIDAK diubah oleh script ini.
 Jalankan setelah migrasi database selesai:
     python seed.py
 """
+
 from api.app import app
 from models import db
 from models.models import Condition, Recommendation, Rule, Symptom
@@ -63,13 +64,11 @@ CONDITIONS = [
             ),
             (
                 "normal_2",
-                "IF sakit_kepala AND NOT sulit_konsentrasi AND NOT "
-                "cemas_berlebihan THEN Normal",
+                "IF sakit_kepala AND NOT sulit_konsentrasi AND NOT " "cemas_berlebihan THEN Normal",
             ),
             (
                 "normal_3",
-                "IF mudah_lupa AND NOT sulit_konsentrasi AND NOT "
-                "pikiran_negatif THEN Normal",
+                "IF mudah_lupa AND NOT sulit_konsentrasi AND NOT " "pikiran_negatif THEN Normal",
             ),
         ],
     },
@@ -83,8 +82,7 @@ CONDITIONS = [
         "rules": [
             (
                 "stres_ringan_1",
-                "IF sulit_tidur AND cemas_berlebihan AND sulit_konsentrasi "
-                "THEN Stres Ringan",
+                "IF sulit_tidur AND cemas_berlebihan AND sulit_konsentrasi " "THEN Stres Ringan",
             ),
             (
                 "stres_ringan_2",
@@ -124,8 +122,7 @@ CONDITIONS = [
             ),
             (
                 "stres_berat_3",
-                "IF sulit_tidur AND mudah_marah AND penurunan_produktivitas "
-                "THEN Stres Berat",
+                "IF sulit_tidur AND mudah_marah AND penurunan_produktivitas " "THEN Stres Berat",
             ),
             (
                 "stres_berat_4",
@@ -149,8 +146,7 @@ CONDITIONS = [
         "rules": [
             (
                 "kecemasan_1",
-                "IF cemas_berlebihan AND sulit_tidur AND mudah_marah THEN "
-                "Kecemasan",
+                "IF cemas_berlebihan AND sulit_tidur AND mudah_marah THEN " "Kecemasan",
             ),
             (
                 "kecemasan_2",
@@ -166,8 +162,7 @@ CONDITIONS = [
             ),
             (
                 "kecemasan_5",
-                "IF cemas_berlebihan AND mudah_lupa AND sulit_konsentrasi "
-                "THEN Kecemasan",
+                "IF cemas_berlebihan AND mudah_lupa AND sulit_konsentrasi " "THEN Kecemasan",
             ),
         ],
     },
@@ -182,23 +177,19 @@ CONDITIONS = [
         "rules": [
             (
                 "depresi_1",
-                "IF sedih_berkepanjangan AND kehilangan_motivasi THEN "
-                "Potensi Depresi",
+                "IF sedih_berkepanjangan AND kehilangan_motivasi THEN " "Potensi Depresi",
             ),
             (
                 "depresi_2",
-                "IF putus_asa AND kehilangan_motivasi AND menarik_diri "
-                "THEN Potensi Depresi",
+                "IF putus_asa AND kehilangan_motivasi AND menarik_diri " "THEN Potensi Depresi",
             ),
             (
                 "depresi_3",
-                "IF sedih_berkepanjangan AND menarik_diri THEN Potensi "
-                "Depresi",
+                "IF sedih_berkepanjangan AND menarik_diri THEN Potensi " "Depresi",
             ),
             (
                 "depresi_4",
-                "IF putus_asa AND penurunan_produktivitas THEN Potensi "
-                "Depresi",
+                "IF putus_asa AND penurunan_produktivitas THEN Potensi " "Depresi",
             ),
             (
                 "depresi_5",
@@ -220,9 +211,7 @@ def seed_symptoms():
         for code in codes:
             if Symptom.query.filter_by(code=code).first():
                 continue
-            db.session.add(
-                Symptom(code=code, symptom_name=_humanize(code), category=category)
-            )
+            db.session.add(Symptom(code=code, symptom_name=_humanize(code), category=category))
             created += 1
     db.session.commit()
     print(f"[seed] symptoms: {created} baris baru ditambahkan.")
@@ -266,9 +255,7 @@ def seed_conditions_rules_recommendations():
             if exists:
                 continue
             db.session.add(
-                Recommendation(
-                    condition_id=condition.id, recommendation=recommendation_text
-                )
+                Recommendation(condition_id=condition.id, recommendation=recommendation_text)
             )
             recommendations_created += 1
 

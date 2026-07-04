@@ -48,8 +48,7 @@ class StresBeratRules:
         self._catat(
             "Stres Berat",
             36,
-            "IF sulit_tidur AND mudah_marah AND penurunan_produktivitas "
-            "THEN Stres Berat",
+            "IF sulit_tidur AND mudah_marah AND penurunan_produktivitas " "THEN Stres Berat",
         )
 
     @Rule(

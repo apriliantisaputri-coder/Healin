@@ -53,6 +53,7 @@
 </main>
 
 <script src="js/auth.js"></script>
+<script src="js/api.js"></script>
 <script>
   // Kalau datang dari gerbang questionnaire.html, sesuaikan pesan & tujuan redirect
   const redirectTarget = healinGetRedirectParam();
@@ -69,7 +70,7 @@
     errorBox.classList.remove("d-none");
   }
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     errorBox.classList.add("d-none");
 
@@ -81,16 +82,22 @@
       return;
     }
 
-    const users = healinGetUsers();
-    const user = users.find((u) => u.email === email && u.password === password);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
 
-    if (!user) {
-      showError("Email atau kata sandi salah. Periksa lagi, atau daftar dulu kalau belum punya akun.");
-      return;
+    try {
+      const authResult = await apiLogin({ email, password });
+      healinSetSession(authResult);
+      window.location.href = redirectTarget;
+    } catch (err) {
+      showError(
+        err.status === 401
+          ? "Email atau kata sandi salah. Periksa lagi, atau daftar dulu kalau belum punya akun."
+          : "Tidak dapat menghubungi server. Pastikan backend Flask sedang berjalan."
+      );
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
     }
-
-    healinSetSession(user);
-    window.location.href = redirectTarget;
   });
 </script>
 </body>

@@ -43,7 +43,27 @@ class HealInEngine(
 
     def hasil_akhir(self) -> dict:
         """Menentukan kondisi akhir berdasarkan skor/prioritas tertinggi
-        di antara seluruh aturan yang aktif (conflict resolution)."""
+        di antara seluruh aturan yang aktif (conflict resolution).
+
+        Catatan implementasi (menjawab Bab 2.3.3/3.3 laporan): seluruh
+        aturan yang kondisinya terpenuhi TETAP dieksekusi (Experta tidak
+        dihentikan paksa setelah satu firing), dan setiap firing dicatat
+        ke ``explanation_trace`` apa adanya. Nilai ``salience`` pada
+        setiap ``@Rule`` (lihat SALIENCE_* di rules/*.py) hanya
+        memengaruhi urutan eksekusi di agenda Experta.
+
+        Konflik resolusi yang menentukan KESIMPULAN AKHIR dilakukan di
+        sini dengan memilih fact ``Kondisi`` berskor tertinggi. Nilai
+        ``skor`` pada tiap rule sengaja dikalibrasi agar rentangnya
+        SELALU sejalan dengan urutan salience per kategori kondisi
+        (Normal < Stres Ringan < Kecemasan < Stres Berat < Potensi
+        Depresi; lihat konstanta SALIENCE_* pada rules/*_rules.py),
+        sehingga secara efektif memprioritaskan kondisi dengan tingkat
+        keparahan lebih tinggi -- persis seperti yang dideskripsikan
+        pada laporan -- walau secara teknis pemilihannya lewat skor,
+        bukan lewat menghentikan agenda Experta di rule bersalience
+        tertinggi.
+        """
         kondisi_aktif = [f for f in self.facts.values() if isinstance(f, Kondisi)]
 
         if not kondisi_aktif:

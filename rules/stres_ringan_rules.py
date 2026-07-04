@@ -18,8 +18,7 @@ class StresRinganRules:
         self._catat(
             "Stres Ringan",
             20,
-            "IF sulit_tidur AND cemas_berlebihan AND sulit_konsentrasi "
-            "THEN Stres Ringan",
+            "IF sulit_tidur AND cemas_berlebihan AND sulit_konsentrasi " "THEN Stres Ringan",
         )
 
     @Rule(
@@ -28,9 +27,7 @@ class StresRinganRules:
         salience=SALIENCE_STRES_RINGAN,
     )
     def stres_ringan_2(self):
-        self._catat(
-            "Stres Ringan", 18, "IF sulit_tidur AND mudah_lelah THEN Stres Ringan"
-        )
+        self._catat("Stres Ringan", 18, "IF sulit_tidur AND mudah_lelah THEN Stres Ringan")
 
     @Rule(
         Gejala(nama="sakit_kepala"),

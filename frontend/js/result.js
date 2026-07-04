@@ -587,7 +587,7 @@ async function renderComparison(hasil) {
     return;
   }
   try {
-    const res = await apiGetHistoryList(session.email, { page: 1, perPage: 8 });
+    const res = await apiGetHistoryList({ page: 1, perPage: 8 });
     const items = (res.data || []).slice().reverse(); // lama -> baru
     if (items.length <= 1) {
       body.innerHTML = `<div class="hd-empty-note">Ini adalah skrining pertama Anda. Belum ada riwayat sebelumnya untuk dibandingkan.</div>`;

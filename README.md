@@ -97,8 +97,13 @@ python seed.py
 # Demo cepat lewat terminal
 python demo.py
 
-# Unit test
-pytest test_engine.py -v
+# Unit test (rule engine + autentikasi)
+pytest -v
+# atau spesifik: pytest test_engine.py test_auth_utils.py test_auth_api.py -v
+
+# Pemformatan & linting kode (Black + Flake8)
+black .
+flake8 .
 
 # Jalankan REST API (http://localhost:5000)
 flask run
@@ -112,6 +117,32 @@ Library `experta` terakhir dirilis untuk Python < 3.10 dan memakai
 `collections.abc.Mapping`. `engine/compat.py` berisi patch kecil yang
 menambal ini secara otomatis -- **wajib tetap ada** apabila proyek
 dijalankan di Python 3.10/3.11/3.12.
+
+## Autentikasi (Register / Login / Logout)
+
+Sejak penambahan `api/auth_utils.py`, autentikasi berjalan sepenuhnya
+di backend (bukan lagi localStorage frontend-only): password di-hash
+dengan `werkzeug.security`, dan sesi direpresentasikan sebagai token
+acak yang wajib disertakan lewat header `Authorization: Bearer
+<token>` pada endpoint yang dilindungi (`/history`, `/history/<id>`,
+`/api/logout`, `/api/me`). Token kedaluwarsa otomatis 12 jam setelah
+diterbitkan (lihat `TOKEN_LIFETIME` pada `api/auth_utils.py`).
+
+```bash
+# Daftar akun baru
+curl -X POST http://localhost:5000/api/register \
+  -H "Content-Type: application/json" \
+  -d '{"full_name": "Andi", "email": "andi@mail.com", "password": "rahasia123"}'
+
+# Login (mengembalikan token)
+curl -X POST http://localhost:5000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "andi@mail.com", "password": "rahasia123"}'
+
+# Akses riwayat pemeriksaan (butuh token dari /api/login)
+curl http://localhost:5000/history \
+  -H "Authorization: Bearer <token>"
+```
 
 ## Contoh pemakaian endpoint
 

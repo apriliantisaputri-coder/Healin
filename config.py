@@ -9,6 +9,7 @@ Prioritas pembentukan URI database:
 2. Jika tidak, bentuk otomatis dari DB_HOST/DB_PORT/DB_NAME/DB_USER/
    DB_PASSWORD.
 """
+
 import os
 
 from dotenv import load_dotenv

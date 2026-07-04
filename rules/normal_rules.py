@@ -33,8 +33,7 @@ class NormalRules:
         self._catat(
             "Normal",
             5,
-            "IF sakit_kepala AND NOT sulit_konsentrasi AND NOT "
-            "cemas_berlebihan THEN Normal",
+            "IF sakit_kepala AND NOT sulit_konsentrasi AND NOT " "cemas_berlebihan THEN Normal",
         )
 
     @Rule(
@@ -47,6 +46,5 @@ class NormalRules:
         self._catat(
             "Normal",
             5,
-            "IF mudah_lupa AND NOT sulit_konsentrasi AND NOT "
-            "pikiran_negatif THEN Normal",
+            "IF mudah_lupa AND NOT sulit_konsentrasi AND NOT " "pikiran_negatif THEN Normal",
         )

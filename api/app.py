@@ -7,6 +7,7 @@ atau:
     python api/app.py
 Server dapat diakses di http://localhost:5000
 """
+
 import os
 import sys
 
@@ -30,9 +31,7 @@ from rules.rekomendasi import get_rekomendasi  # noqa: E402
 # yang sama -- jadi tidak akan ada lagi error CORS/"Failed to fetch"
 # akibat frontend & backend dibuka dari alamat yang berbeda.
 # --------------------------------------------------------------------- #
-FRONTEND_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend"
-)
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
 
 app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
 
@@ -40,6 +39,7 @@ app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
 @app.route("/")
 def serve_frontend_index():
     return app.send_static_file("index.html")
+
 
 # --------------------------------------------------------------------- #
 # Konfigurasi database PostgreSQL (fondasi untuk fitur Login, History,
@@ -57,6 +57,13 @@ from config import Config  # noqa: E402
 from models import db  # noqa: E402
 from models import models as _models  # noqa: E402,F401  (registrasi tabel ke db.metadata)
 from models.models import Condition, ExaminationHistory, User  # noqa: E402
+from api.auth_utils import (  # noqa: E402
+    get_authenticated_user,
+    hash_password,
+    issue_token,
+    require_auth,
+    verify_password,
+)
 
 app.config.from_object(Config)
 db.init_app(app)
@@ -109,7 +116,6 @@ except ImportError:  # fallback manual jika flask-cors belum terinstal
         return response
 
 
-
 @app.route("/api/gejala", methods=["GET"])
 def daftar_gejala():
     """Mengembalikan daftar gejala yang dikenali sistem, untuk
@@ -143,12 +149,14 @@ def _simpan_riwayat_pemeriksaan(user_email, user_nama, gejala, hasil, rekomendas
       TIDAK dilempar ke pemanggil, supaya hasil skrining tetap bisa
       ditampilkan ke pengguna seperti biasa.
 
-    Catatan penting: sistem login saat ini masih demo/frontend-only
-    (localStorage, belum ada endpoint register/login backend). Baris
-    pada tabel ``users`` di sini HANYA dibuat/dicari sebagai target
-    foreign key agar ``examination_history.user_id`` valid -- ini
-    bukan sistem autentikasi baru dan tidak mengubah mekanisme
-    login/register yang sudah ada di frontend.
+    Sejak ditambahkannya autentikasi backend asli (lihat api/auth_utils.py
+    dan endpoint /api/register, /api/login), fungsi ini lebih diarahkan
+    untuk dipakai bersama pengguna yang sudah punya akun ter-hash di
+    tabel ``users`` (bukan sekadar dibuat on-the-fly seperti sebelumnya).
+    Jika email yang dikirim belum terdaftar, baris ``users`` tetap
+    dibuat sebagai fallback (mis. dipanggil dari skenario lama), tetapi
+    tanpa password_hash (akun semacam ini tidak bisa dipakai login
+    lewat /api/login sampai mendaftar ulang secara normal).
     """
     if not user_email:
         print(
@@ -183,8 +191,7 @@ def _simpan_riwayat_pemeriksaan(user_email, user_nama, gejala, hasil, rekomendas
         db.session.add(riwayat)
         db.session.commit()
         print(
-            f"[Heal.In] Riwayat skrining tersimpan (user_id={user.id}, "
-            f"kondisi={kondisi_nama})."
+            f"[Heal.In] Riwayat skrining tersimpan (user_id={user.id}, " f"kondisi={kondisi_nama})."
         )
     except Exception as exc:  # noqa: BLE001
         db.session.rollback()
@@ -218,8 +225,17 @@ def skrining():
     # docstring _simpan_riwayat_pemeriksaan() di atas. Dibungkus try/except
     # di dalam fungsi tersebut sehingga kegagalan database tidak pernah
     # menggagalkan response di bawah ini.
-    user_email = (data.get("user_email") or "").strip().lower() or None
-    user_nama = (data.get("user_nama") or "").strip() or None
+    # Utamakan identitas dari token sesi (Authorization: Bearer <token>)
+    # kalau pengguna sedang login lewat autentikasi backend yang baru;
+    # fallback ke user_email/user_nama pada body request untuk menjaga
+    # kompatibilitas mundur dengan alur lama.
+    authed_user = get_authenticated_user()
+    if authed_user is not None:
+        user_email = authed_user.email
+        user_nama = authed_user.full_name
+    else:
+        user_email = (data.get("user_email") or "").strip().lower() or None
+        user_nama = (data.get("user_nama") or "").strip() or None
     _simpan_riwayat_pemeriksaan(user_email, user_nama, gejala, hasil, rekomendasi)
 
     return (
@@ -236,27 +252,150 @@ def skrining():
 
 
 # --------------------------------------------------------------------- #
+# Autentikasi backend (Register / Login / Logout / Me) -- ADITIF.
+#
+# Menggantikan mekanisme lama yang murni "demo/frontend-only" (password
+# polos di localStorage, tanpa verifikasi server) dengan autentikasi
+# sungguhan: password di-hash (werkzeug.security), dan sesi login
+# direpresentasikan sebagai token acak yang disimpan di kolom
+# users.auth_token + users.token_expires_at (lihat api/auth_utils.py).
+# TIDAK menyentuh /api/gejala, /api/skrining (selain penambahan dukungan
+# token di bawah), /api/health, maupun rule engine Experta.
+# --------------------------------------------------------------------- #
+
+
+@app.route("/api/register", methods=["POST"])
+def register():
+    """Daftarkan akun baru. Password di-hash sebelum disimpan; TIDAK
+    pernah menyimpan password dalam bentuk teks polos."""
+    data = request.get_json(silent=True) or {}
+    full_name = (data.get("full_name") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+    age = data.get("age")
+    study_program = (data.get("study_program") or "").strip() or None
+
+    if not full_name or not email or not password:
+        return jsonify({"error": "Nama lengkap, email, dan kata sandi wajib diisi."}), 422
+    if len(password) < 6:
+        return jsonify({"error": "Kata sandi minimal 6 karakter."}), 422
+
+    if User.query.filter_by(email=email).first() is not None:
+        return jsonify({"error": "Email ini sudah terdaftar. Silakan masuk saja."}), 409
+
+    try:
+        age_value = int(age) if age not in (None, "") else None
+    except (TypeError, ValueError):
+        return jsonify({"error": "Usia harus berupa angka."}), 422
+
+    token, expires_at = issue_token()
+    user = User(
+        full_name=full_name,
+        email=email,
+        password_hash=hash_password(password),
+        age=age_value,
+        study_program=study_program,
+        auth_token=token,
+        token_expires_at=expires_at,
+    )
+    db.session.add(user)
+    db.session.commit()
+
+    return (
+        jsonify(
+            {
+                "token": token,
+                "expires_at": expires_at.isoformat(),
+                "user": {"id": user.id, "full_name": user.full_name, "email": user.email},
+            }
+        ),
+        201,
+    )
+
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    """Verifikasi email + kata sandi, lalu terbitkan token sesi baru."""
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+
+    if not email or not password:
+        return jsonify({"error": "Email dan kata sandi wajib diisi."}), 422
+
+    user = User.query.filter_by(email=email).first()
+    if user is None or not verify_password(password, user.password_hash):
+        return jsonify({"error": "Email atau kata sandi salah."}), 401
+
+    token, expires_at = issue_token()
+    user.auth_token = token
+    user.token_expires_at = expires_at
+    db.session.commit()
+
+    return (
+        jsonify(
+            {
+                "token": token,
+                "expires_at": expires_at.isoformat(),
+                "user": {"id": user.id, "full_name": user.full_name, "email": user.email},
+            }
+        ),
+        200,
+    )
+
+
+@app.route("/api/logout", methods=["POST"])
+@require_auth
+def logout(current_user):
+    """Cabut token sesi yang sedang dipakai (invalidasi di sisi server)."""
+    current_user.auth_token = None
+    current_user.token_expires_at = None
+    db.session.commit()
+    return jsonify({"message": "Berhasil keluar."}), 200
+
+
+@app.route("/api/me", methods=["GET"])
+def me():
+    """Cek status sesi saat ini. Mengembalikan 401 kalau token tidak
+    ada, salah, atau sudah kedaluwarsa -- dipakai frontend untuk
+    memvalidasi sesi tersimpan saat halaman dimuat."""
+    user = get_authenticated_user()
+    if user is None:
+        return jsonify({"error": "Sesi tidak valid atau sudah kedaluwarsa."}), 401
+    return jsonify({"id": user.id, "full_name": user.full_name, "email": user.email}), 200
+
+
+# --------------------------------------------------------------------- #
 # Fitur Riwayat Pemeriksaan (History) -- ADITIF, membaca data yang sudah
 # tersimpan di tabel examination_history lewat _simpan_riwayat_pemeriksaan()
 # di atas. TIDAK menyentuh /api/gejala, /api/skrining, /api/health,
 # maupun rule engine Experta / algoritma Forward Chaining sama sekali.
 #
-# Catatan penting soal keamanan: sesuai catatan pada
-# _simpan_riwayat_pemeriksaan(), sistem login Heal.In saat ini masih
-# demo/frontend-only (localStorage, belum ada session/token backend).
-# Karena itu, "pengguna yang sedang login" pada endpoint di bawah
-# diidentifikasi lewat parameter ``user_email`` yang dikirim frontend
-# dari sesi localStorage (healinGetSession(), sama seperti pola yang
-# sudah dipakai /api/skrining). Validasi kepemilikan data (user hanya
-# bisa melihat/menghapus riwayat miliknya sendiri) TETAP ditegakkan di
-# backend dengan mencocokkan user_id pemilik riwayat terhadap user yang
-# terkait dengan user_email tersebut -- bukan sekadar mengandalkan
+# Endpoint di bawah ini dilindungi token sesi asli (lihat require_auth
+# pada api/auth_utils.py): permintaan tanpa header ``Authorization:
+# Bearer <token>``, dengan token salah, atau token sudah kedaluwarsa
+# akan direspons 401 -- inilah yang membuat skenario pengujian "tanpa
+# token / token kadaluarsa -> 401" pada Bab 4.3.b laporan benar-benar
+# teruji terhadap mekanisme sungguhan. Kepemilikan data (user hanya
+# bisa melihat/menghapus riwayat miliknya sendiri) tetap ditegakkan di
+# backend dengan mencocokkan user_id pemilik riwayat terhadap
+# current_user hasil autentikasi token, bukan sekadar mengandalkan
 # frontend.
 # --------------------------------------------------------------------- #
 
 INDO_MONTHS = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
 ]
 
 
@@ -272,14 +411,14 @@ def _get_user_by_email(email):
 
 
 @app.route("/history", methods=["GET"])
-def get_history_list():
+@require_auth
+def get_history_list(current_user):
     """Mengembalikan riwayat pemeriksaan milik pengguna yang sedang login
     (diurutkan tanggal terbaru -> terlama), mendukung pencarian sederhana
     (tanggal/kondisi) dan pagination supaya tidak memuat seluruh data
-    sekaligus."""
-    user_email = (request.args.get("user_email") or "").strip().lower()
-    if not user_email:
-        return jsonify({"error": "Pengguna belum login (user_email wajib diisi)."}), 401
+    sekaligus. Identitas pengguna diambil dari token sesi (require_auth),
+    bukan dari parameter user_email yang mudah dipalsukan di sisi klien."""
+    user = current_user
 
     try:
         page = max(int(request.args.get("page", 1)), 1)
@@ -291,13 +430,6 @@ def get_history_list():
         per_page = 10
 
     q = (request.args.get("q") or "").strip().lower()
-
-    user = _get_user_by_email(user_email)
-    if user is None:
-        # Belum pernah melakukan skrining sama sekali -> riwayat kosong.
-        return jsonify(
-            {"data": [], "page": 1, "per_page": per_page, "total": 0, "total_pages": 0}
-        ), 200
 
     from sqlalchemy import desc
 
@@ -311,14 +443,15 @@ def get_history_list():
         # dari database.
         semua = base_query.order_by(desc(ExaminationHistory.examination_date)).all()
         hasil_pencarian = [
-            r for r in semua
+            r
+            for r in semua
             if q in r.detected_condition.lower()
             or q in _format_tanggal_indo(r.examination_date).lower()
         ]
         total = len(hasil_pencarian)
         total_pages = max((total + per_page - 1) // per_page, 1)
         page = min(page, total_pages)
-        items = hasil_pencarian[(page - 1) * per_page: (page - 1) * per_page + per_page]
+        items = hasil_pencarian[(page - 1) * per_page : (page - 1) * per_page + per_page]
     else:
         ordered_query = base_query.order_by(desc(ExaminationHistory.examination_date))
         total = ordered_query.count()
@@ -337,22 +470,27 @@ def get_history_list():
         for r in items
     ]
 
-    return jsonify(
-        {"data": data, "page": page, "per_page": per_page, "total": total, "total_pages": total_pages}
-    ), 200
+    return (
+        jsonify(
+            {
+                "data": data,
+                "page": page,
+                "per_page": per_page,
+                "total": total,
+                "total_pages": total_pages,
+            }
+        ),
+        200,
+    )
 
 
 @app.route("/history/<int:history_id>", methods=["GET"])
-def get_history_detail(history_id):
+@require_auth
+def get_history_detail(history_id, current_user):
     """Mengembalikan detail satu riwayat pemeriksaan, HANYA apabila
-    riwayat tersebut milik pengguna yang sedang login."""
-    user_email = (request.args.get("user_email") or "").strip().lower()
-    if not user_email:
-        return jsonify({"error": "Pengguna belum login (user_email wajib diisi)."}), 401
-
-    user = _get_user_by_email(user_email)
-    if user is None:
-        return jsonify({"error": "Pengguna tidak ditemukan."}), 404
+    riwayat tersebut milik pengguna yang sedang login (diautentikasi
+    lewat token sesi, bukan parameter user_email)."""
+    user = current_user
 
     riwayat = ExaminationHistory.query.get(history_id)
     if riwayat is None:
@@ -362,31 +500,30 @@ def get_history_detail(history_id):
         # perubahan URL (mis. /history/5 -> /history/6).
         return jsonify({"error": "Anda tidak memiliki akses ke riwayat ini."}), 403
 
-    return jsonify(
-        {
-            "id": riwayat.id,
-            "examination_date": riwayat.examination_date.isoformat(),
-            "user_full_name": user.full_name,
-            "detected_condition": riwayat.detected_condition,
-            "severity": riwayat.severity,
-            "selected_symptoms": riwayat.selected_symptoms,
-            "explanation_trace": riwayat.explanation_trace,
-            "recommendation": riwayat.recommendation,
-        }
-    ), 200
+    return (
+        jsonify(
+            {
+                "id": riwayat.id,
+                "examination_date": riwayat.examination_date.isoformat(),
+                "user_full_name": user.full_name,
+                "detected_condition": riwayat.detected_condition,
+                "severity": riwayat.severity,
+                "selected_symptoms": riwayat.selected_symptoms,
+                "explanation_trace": riwayat.explanation_trace,
+                "recommendation": riwayat.recommendation,
+            }
+        ),
+        200,
+    )
 
 
 @app.route("/history/<int:history_id>", methods=["DELETE"])
-def delete_history(history_id):
+@require_auth
+def delete_history(history_id, current_user):
     """Menghapus satu riwayat pemeriksaan, HANYA apabila riwayat
-    tersebut milik pengguna yang sedang login."""
-    user_email = (request.args.get("user_email") or "").strip().lower()
-    if not user_email:
-        return jsonify({"error": "Pengguna belum login (user_email wajib diisi)."}), 401
-
-    user = _get_user_by_email(user_email)
-    if user is None:
-        return jsonify({"error": "Pengguna tidak ditemukan."}), 404
+    tersebut milik pengguna yang sedang login (diautentikasi lewat
+    token sesi, bukan parameter user_email)."""
+    user = current_user
 
     riwayat = ExaminationHistory.query.get(history_id)
     if riwayat is None:

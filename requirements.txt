@@ -10,3 +10,7 @@ Flask-SQLAlchemy==3.1.1
 python-dotenv==1.0.1
 Flask-Migrate==4.0.7
 alembic==1.13.2
+
+# Kualitas kode (Bab 2.6 laporan): pemformatan & linting PEP8
+black==24.4.2
+flake8==7.1.0

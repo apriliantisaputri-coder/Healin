@@ -78,6 +78,7 @@
 </main>
 
 <script src="js/auth.js"></script>
+<script src="js/api.js"></script>
 <script>
   const form = document.getElementById("signUpForm");
   const errorBox = document.getElementById("errorBox");
@@ -87,7 +88,7 @@
     errorBox.classList.remove("d-none");
   }
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     errorBox.classList.add("d-none");
 
@@ -111,20 +112,29 @@
       return;
     }
 
-    const users = healinGetUsers();
-    if (users.some((u) => u.email === email)) {
-      showError("Email ini sudah terdaftar. Silakan masuk saja.");
-      return;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      const authResult = await apiRegister({
+        fullName: nama,
+        email,
+        password,
+        age: usia || null,
+        studyProgram: prodi || null,
+      });
+      healinSetSession(authResult);
+      window.location.href =
+        healinGetRedirectParam() === "index.html" ? "questionnaire.html" : healinGetRedirectParam();
+    } catch (err) {
+      showError(
+        err.status === 409
+          ? "Email ini sudah terdaftar. Silakan masuk saja."
+          : err.message || "Tidak dapat menghubungi server. Pastikan backend Flask sedang berjalan."
+      );
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
     }
-
-    const newUser = { nama, email, usia: usia || null, prodi: prodi || null, password };
-    users.push(newUser);
-    healinSaveUsers(users);
-    healinSetSession(newUser);
-
-    window.location.href = healinGetRedirectParam() === "index.html"
-      ? "questionnaire.html"
-      : healinGetRedirectParam();
   });
 </script>
 </body>

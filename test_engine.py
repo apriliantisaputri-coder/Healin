@@ -4,6 +4,7 @@ proposal Bab 7E (Unit Testing pada Rule Engine).
 
 Jalankan: pytest test_engine.py -v
 """
+
 from engine.knowledge_engine import run_inference
 
 

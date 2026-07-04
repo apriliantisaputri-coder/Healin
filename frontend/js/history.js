@@ -103,7 +103,7 @@ async function loadHistory() {
   loadingState.classList.remove("d-none");
 
   try {
-    const result = await apiGetHistoryList(session.email, {
+    const result = await apiGetHistoryList({
       page: state.page,
       perPage: state.perPage,
       q: state.q,
@@ -153,7 +153,7 @@ btnKonfirmasiHapus.addEventListener("click", async () => {
   btnKonfirmasiHapus.textContent = "Menghapus...";
 
   try {
-    await apiDeleteHistory(session.email, id);
+    await apiDeleteHistory(id);
     closeConfirmModal();
     showToast("Riwayat berhasil dihapus.");
     // Jika halaman saat ini jadi kosong setelah hapus & bukan halaman
