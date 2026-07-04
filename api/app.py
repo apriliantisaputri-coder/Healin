@@ -23,6 +23,57 @@ from rules.rekomendasi import get_rekomendasi  # noqa: E402
 
 app = Flask(__name__)
 
+# --------------------------------------------------------------------- #
+# Konfigurasi database PostgreSQL (fondasi untuk fitur Login, History,
+# Dashboard, dan penyimpanan hasil skrining ke depan).
+#
+# PENTING: inisialisasi ini bersifat aditif -- tidak mengubah, memindah,
+# atau menghapus endpoint /api/gejala, /api/skrining, /api/health yang
+# sudah dipakai frontend. Jika koneksi database gagal (mis. PostgreSQL
+# belum dinyalakan), aplikasi TETAP berjalan dan endpoint di atas tetap
+# berfungsi seperti biasa -- hanya fitur yang butuh database yang akan
+# terpengaruh. Pesan error yang jelas dicetak ke log, aplikasi tidak
+# crash tanpa informasi.
+# --------------------------------------------------------------------- #
+from config import Config  # noqa: E402
+from models import db  # noqa: E402
+from models import models as _models  # noqa: E402,F401  (registrasi tabel ke db.metadata)
+
+app.config.from_object(Config)
+db.init_app(app)
+
+try:
+    from flask_migrate import Migrate
+
+    migrate = Migrate(app, db)
+except ImportError:
+    print(
+        "[Heal.In] Flask-Migrate belum terinstal -- jalankan "
+        "'pip install -r requirements.txt' untuk mengaktifkan fitur "
+        "migrasi database (flask db init/migrate/upgrade)."
+    )
+
+with app.app_context():
+    try:
+        # Percobaan koneksi ringan ke PostgreSQL agar masalah konfigurasi
+        # (host/port/kredensial salah, server belum menyala, dsb) segera
+        # terlihat jelas di log saat aplikasi start, alih-alih baru
+        # muncul samar saat salah satu fitur database diakses nanti.
+        from sqlalchemy import text
+
+        with db.engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+        print(f"[Heal.In] Koneksi database '{Config.DATABASE_NAME_FOR_LOG}' OK.")
+    except Exception as exc:  # noqa: BLE001
+        print(
+            "[Heal.In] PERINGATAN: gagal terhubung ke database PostgreSQL "
+            f"('{Config.DATABASE_NAME_FOR_LOG}'). Endpoint skrining "
+            "(/api/gejala, /api/skrining) tetap berjalan normal karena "
+            "tidak bergantung pada database, tetapi fitur yang butuh "
+            "penyimpanan data (Login, History, Dashboard) tidak akan "
+            f"berfungsi sampai koneksi database diperbaiki. Detail error: {exc}"
+        )
+
 # Mengizinkan frontend statis (mis. dibuka lewat Live Server di port lain)
 # memanggil API ini dari origin yang berbeda.
 try:

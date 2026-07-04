@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Heal.In — Mental Health Checker</title>
+<meta name="description" content="Heal.In adalah sistem pakar kesehatan mental mahasiswa berbasis AI untuk skrining stres, kecemasan, dan depresi secara mandiri, cepat, dan terpercaya.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -15,19 +16,32 @@
 <nav class="navbar navbar-expand-lg navbar-healin sticky-top">
   <div class="container">
     <a class="brand" href="index.html">
-      <svg viewBox="0 0 24 24"><path fill="#2f6140" d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2 4.5 5.4 3.7c2-.5 4 .3 5.1 2 .9-1.7 2.9-2.5 5-2 3.4.8 5 4.4 3.4 8C19.5 16.4 12 21 12 21z"/></svg>
-      Heal.In
+      <span class="logo-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#355F2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2 4.5 5.4 3.7c2-.5 4 .3 5.1 2 .9-1.7 2.9-2.5 5-2 3.4.8 5 4.4 3.4 8C19.5 16.4 12 21 12 21z" fill="#355F2E" stroke="none"/>
+          <path d="M3 12h4l1.5-3L11 15l1.5-5 1.2 2.5H21" stroke="#EAF7A6" stroke-width="1.6"/>
+        </svg>
+      </span>
+      <span>
+        Heal. In
+        <span class="brand-sub">Mental Health Checker</span>
+      </span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="nav">
-      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+      <ul class="navbar-nav mx-lg-auto align-items-lg-center gap-lg-2">
         <li class="nav-item"><a class="nav-link active" href="index.html">Beranda</a></li>
         <li class="nav-item"><a class="nav-link" href="#tentang">Tentang Sistem</a></li>
         <li class="nav-item"><a class="nav-link" href="#cara-kerja">Cara Kerja</a></li>
         <li class="nav-item ms-lg-2"><a class="btn-healin" href="questionnaire.html">Mulai Skrining</a></li>
+        <li class="nav-item"><a class="nav-link" href="#fitur">Cara Kerja</a></li>
+        <li class="nav-item"><a class="nav-link" href="#deteksi">Pemeriksaan</a></li>
+        <li class="nav-item"><a class="nav-link" href="#kontak">FAQ</a></li>
       </ul>
+      <a href="questionnaire.html" class="btn-healin ms-lg-2">Mulai Skrining</a>
+      <div id="authNavSlot" class="d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0"></div>
     </div>
   </div>
 </nav>
@@ -37,24 +51,38 @@
   <div class="container">
     <div class="row align-items-center g-5">
       <div class="col-lg-7">
-        <span class="eyebrow-pill">Sistem Pakar Kesehatan Mental Mahasiswa</span>
-        <h1 class="display">Ruang Awal untuk Memahami Kondisi Mentalmu.</h1>
-        <p class="lede mt-3">Kenali kondisi mentalmu melalui skrining berbasi AI yang
-          cepat, mudah, dan informatif. Dapatkan hasil analisis serta
-          rekomendasi yang dapat membantumu mengambil langkah
-          selanjutnya.</p>
+        <span class="eyebrow-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2 4.5 5.4 3.7c2-.5 4 .3 5.1 2 .9-1.7 2.9-2.5 5-2 3.4.8 5 4.4 3.4 8C19.5 16.4 12 21 12 21z"/></svg>
+          Sistem Pakar Kesehatan Mental Mahasiswa
+        </span>
+        <h1>Ruang Awal untuk Memahami<br>Kondisi <span class="accent-word">Mentalmu</span></h1>
+        <p class="lede mt-3">Kenali kondisi mentalmu melalui skrining berbasis AI yang cepat, mudah, dan informatif.</p>
+        <p class="lede">Dapatkan hasil analisis serta rekomendasi yang membantu menentukan langkah selanjutnya.</p>
         <div class="d-flex flex-wrap gap-3 mt-4">
-          <a href="questionnaire.html" class="btn-healin">Mulai Skrining Sekarang</a>
-          <a href="#cara-kerja" class="btn-healin-outline" style="border-color:rgba(255,255,255,.5); color:#fff !important;">Lihat Cara Kerja</a>
+          <a href="questionnaire.html" class="btn-healin">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            Cek Kesehatan Mental
+          </a>
+          <a href="#tentang" class="btn-outline-glass">
+            Pelajari Lebih Lanjut
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
         </div>
-        <p class="mt-4" style="font-size:.85rem; color:rgba(255,255,255,.7);">
-          Hasil skrining bersifat identifikasi awal, bukan pengganti diagnosis tenaga profesional.
-        </p>
+        <p class="hero-disclaimer mt-4 mb-0">Hasil skrining bersifat identifikasi awal, bukan pengganti diagnosis tenaga profesional.</p>
       </div>
       <div class="col-lg-5">
-        <div class="pulse-wrap">
-          <svg viewBox="0 0 360 160" width="100%">
-            <polyline class="pulse-line" points="0,80 60,80 85,30 110,130 135,80 165,80 185,50 205,110 230,80 360,80" />
+        <div class="hero-illustration reveal">
+          <div class="glow"></div>
+          <svg viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 190h70l18-46 26 96 22-118 20 68h60" class="ecg-path"/>
+            <path d="M210 260c-58-40-96-72-96-114 0-30 24-52 53-52 20 0 35 11 43 27 8-16 23-27 43-27 29 0 53 22 53 52 0 42-38 74-96 114z"
+                  fill="#EAF7A6" opacity="0.95"/>
+            <path d="M210 260c-58-40-96-72-96-114 0-30 24-52 53-52 20 0 35 11 43 27 8-16 23-27 43-27 29 0 53 22 53 52 0 42-38 74-96 114z"
+                  fill="none" stroke="#355F2E" stroke-width="3"/>
+            <path d="M150 172h34l12-30 17 62 14-76 13 44h40" fill="none" stroke="#355F2E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="330" cy="90" r="7" fill="#fff" opacity=".8"/>
+            <circle cx="70" cy="250" r="5" fill="#fff" opacity=".6"/>
+            <circle cx="360" cy="220" r="4" fill="#fff" opacity=".7"/>
           </svg>
         </div>
       </div>
@@ -62,147 +90,237 @@
   </div>
 </header>
 
-<!-- ================= TENTANG / FITUR ================= -->
+<!-- ================= ABOUT ================= -->
 <section class="section" id="tentang">
   <div class="container">
-    <p class="eyebrow mb-2">Tentang Heal.In</p>
-    <h2 class="section-title mb-4">Skrining yang bisa kamu telusuri alasannya</h2>
-    <div class="row g-4">
-      <div class="col-md-6 col-lg-3">
-        <div class="card-healin">
-          <div class="icon-badge">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h4l2-7 4 14 2-7h4"/></svg>
+    <div class="row align-items-center g-5">
+      <div class="col-lg-5 reveal">
+        <div class="about-collage">
+          <div class="collage-main">
+            <!-- Ganti src dengan foto utama (contoh: mahasiswa stres dikelilingi pemicu masalah) -->
+            <img src="assets/img/main.png" alt="Mahasiswa mengalami tekanan akademik dan emosi" loading="lazy">
           </div>
-          <h3 class="h6">Forward Chaining</h3>
-          <p class="small text-muted mb-0">Inferensi bertahap dari gejala yang kamu pilih menuju satu kesimpulan kondisi.</p>
+          <div class="collage-float">
+            <!-- Ganti src dengan foto pendukung (contoh: ekspresi emosi campur aduk) -->
+            <img src="assets/img/float.png" alt="Ekspresi emosi campur aduk mahasiswa" loading="lazy">
+          </div>
         </div>
       </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="card-healin">
-          <div class="icon-badge">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg>
+      <div class="col-lg-7 reveal">
+        <p class="eyebrow mb-2">— Tentang Heal.In</p>
+        <h2 class="section-title mb-3">Kami Hadir untuk Kesehatan Mental Mahasiswa</h2>
+        <p style="color:var(--text-gray); font-size:1.02rem; max-width:56ch;">
+          Heal.In adalah sistem pakar berbasis web yang dikembangkan oleh kelompok Heal.In IK24-A
+          sebagai proyek akhir mata kuliah Kecerdasan Buatan. Sistem ini membantu mahasiswa
+          mengenali kondisi kesehatan mentalnya sejak dini melalui teknologi AI yang transparan
+          dan mudah dipahami.
+        </p>
+
+        <div class="about-feature-grid">
+          <div class="about-feature-card">
+            <div class="icon-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h4l2-7 4 14 2-7h4"/></svg></div>
+            <h3>Forward Chaining</h3>
+            <p>Inferensi bertahap dari gejala menuju kesimpulan.</p>
           </div>
-          <h3 class="h6">Rule-Based Reasoning</h3>
-          <p class="small text-muted mb-0">Aturan IF-THEN disusun dari referensi psikologi (PHQ-9, GAD-7, PSS-10).</p>
+          <div class="about-feature-card">
+            <div class="icon-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></div>
+            <h3>Rule-Based Reasoning</h3>
+            <p>Aturan IF-THEN dari pakar psikologi.</p>
+          </div>
+          <div class="about-feature-card">
+            <div class="icon-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <h3>Penjelasan Transparan</h3>
+            <p>Alur penalaran yang mudah dipahami pengguna.</p>
+          </div>
+          <div class="about-feature-card">
+            <div class="icon-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M12 10l-5 5M12 10l5 5"/><path d="M5 20h14"/></svg></div>
+            <h3>Rekomendasi Aksi</h3>
+            <p>Saran tindak lanjut sesuai tingkat kondisi.</p>
+          </div>
+        </div>
+
+        <ul class="checklist">
+          <li><span class="check-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Pemeriksaan mandiri.</li>
+          <li><span class="check-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Penjelasan hasil.</li>
+          <li><span class="check-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Tidak menggantikan psikolog.</li>
+          <li><span class="check-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Mudah dipahami.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DETEKSI KONDISI ================= -->
+<section class="section detect-section" id="deteksi">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 reveal">
+      <div>
+        <p class="eyebrow mb-2">— Deteksi Kondisi</p>
+        <h2 class="section-title mb-0">Kondisi yang Dapat Dideteksi</h2>
+      </div>
+      <div class="filter-pills">
+        <button type="button" class="filter-pill active">Semua</button>
+        <button type="button" class="filter-pill">Stress</button>
+        <button type="button" class="filter-pill">Kecemasan</button>
+        <button type="button" class="filter-pill">Depresi</button>
+      </div>
+    </div>
+
+    <div class="detect-grid reveal">
+      <div class="detect-card detect-card-big">
+        <div class="detect-visual">
+          <!-- Foto: mahasiswa belajar/stres ringan karena tugas -->
+          <img src="assets/img/kondisi-stress-ringan.png" alt="Stress ringan akibat tekanan akademik" loading="lazy">
+        </div>
+        <div class="detect-body">
+          <span class="detect-tag tingkat-ringan">Tingkat Ringan</span>
+          <h3>Stress Ringan — Tekanan Akademik</h3>
+          <p class="detect-desc">Muncul akibat tumpukan tugas dan tenggat waktu, biasanya mereda setelah istirahat cukup.</p>
+          <a href="questionnaire.html" class="detect-link">Lihat Detail
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
         </div>
       </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="card-healin">
-          <div class="icon-badge">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+
+      <div class="detect-sub-grid">
+        <div class="detect-card">
+          <div class="detect-visual">
+            <!-- Foto: ekspresi stres berat/berkepanjangan -->
+            <img src="assets/img/kondisi-stress-berat.png" alt="Stress berat berkepanjangan" loading="lazy">
           </div>
-          <h3 class="h6">Penjelasan Transparan</h3>
-          <p class="small text-muted mb-0">Setiap hasil disertai alur aturan yang aktif, bukan kotak hitam.</p>
+          <div class="detect-body">
+            <span class="detect-tag tingkat-berat">Tingkat Sedang</span>
+            <h3>Stress Berat Berkepanjangan</h3>
+          </div>
         </div>
-      </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="card-healin">
-          <div class="icon-badge">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.35-9-8.8C1.4 8.4 3 5 6.4 4.4c2-.4 3.8.4 5.6 2.6 1.8-2.2 3.6-3 5.6-2.6C21 5 22.6 8.4 21 12.2 19 16.65 12 21 12 21z"/></svg>
+        <div class="detect-card">
+          <div class="detect-visual">
+            <!-- Foto: ekspresi gangguan kecemasan umum -->
+            <img src="assets/img/kondisi-kecemasan.png" alt="Gangguan kecemasan umum" loading="lazy">
           </div>
-          <h3 class="h6">Rekomendasi Bertahap</h3>
-          <p class="small text-muted mb-0">Dari saran mandiri sampai anjuran konsultasi ke konselor kampus.</p>
+          <div class="detect-body">
+            <span class="detect-tag tingkat-cemas">Kecemasan</span>
+            <h3>Gangguan Kecemasan Umum</h3>
+          </div>
+        </div>
+        <div class="detect-card">
+          <div class="detect-visual">
+            <!-- Foto: indikasi depresi ringan -->
+            <img src="assets/img/kondisi-depresi.png" alt="Indikasi depresi ringan" loading="lazy">
+          </div>
+          <div class="detect-body">
+            <span class="detect-tag tingkat-depresi">Potensi Depresi</span>
+            <h3>Indikasi Depresi Ringan</h3>
+          </div>
+        </div>
+        <div class="detect-card">
+          <div class="detect-visual">
+            <!-- Foto: kondisi normal, terpantau baik -->
+            <img src="assets/img/kondisi-normal.png" alt="Kondisi normal terpantau baik" loading="lazy">
+          </div>
+          <div class="detect-body">
+            <span class="detect-tag tingkat-normal">Terpantau Baik</span>
+            <h3>Kondisi Normal</h3>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= KONDISI YANG DIDETEKSI ================= -->
-<section class="section" style="background:var(--hijau-100);">
+<!-- ================= FITUR UTAMA ================= -->
+<section class="section" id="fitur">
   <div class="container">
-    <p class="eyebrow mb-2">Cakupan Skrining</p>
-    <h2 class="section-title mb-4">Lima kondisi yang dapat dikenali sistem</h2>
-    <div class="row g-3">
-      <div class="col-md-6 col-lg-4">
-        <div class="kondisi-card"><span class="tingkat tingkat-normal">Terpantau baik</span>
-          <h3 class="h6 mb-1">Normal</h3>
-          <p class="small text-muted mb-0">Gejala yang dilaporkan minim dan belum mengarah ke pola tertentu.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="kondisi-card"><span class="tingkat tingkat-ringan">Tingkat ringan</span>
-          <h3 class="h6 mb-1">Stres Ringan</h3>
-          <p class="small text-muted mb-0">Biasanya dipicu tekanan akademik jangka pendek.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="kondisi-card"><span class="tingkat tingkat-berat">Tingkat berat</span>
-          <h3 class="h6 mb-1">Stres Berat</h3>
-          <p class="small text-muted mb-0">Kombinasi gejala fisik, kognitif, dan emosional yang menumpuk.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="kondisi-card"><span class="tingkat tingkat-cemas">Perlu perhatian</span>
-          <h3 class="h6 mb-1">Kecemasan (Anxiety)</h3>
-          <p class="small text-muted mb-0">Ditandai rasa cemas berlebihan yang menetap.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="kondisi-card"><span class="tingkat tingkat-depresi">Segera konsultasi</span>
-          <h3 class="h6 mb-1">Potensi Depresi</h3>
-          <p class="small text-muted mb-0">Rasa sedih berkepanjangan, putus asa, atau menarik diri.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4 d-flex">
-        <div class="kondisi-card d-flex flex-column justify-content-center align-items-start" style="background:var(--hijau-700); color:#fff;">
-          <p class="mb-3" style="color:rgba(255,255,255,.85);">Ingin tahu kondisimu sekarang?</p>
-          <a href="questionnaire.html" class="btn-healin" style="background:#fff; color:var(--hijau-800) !important;">Mulai Skrining</a>
-        </div>
-      </div>
+    <div class="text-center reveal">
+      <p class="eyebrow mb-2">— Fitur Utama</p>
+      <h2 class="section-title mb-0">Layanan Sistem Heal.In</h2>
     </div>
-  </div>
-</section>
 
-<!-- ================= CARA KERJA ================= -->
-<section class="section" id="cara-kerja">
-  <div class="container">
-    <p class="eyebrow mb-2">Cara Kerja</p>
-    <h2 class="section-title mb-4">Empat langkah singkat</h2>
-    <div class="row g-4">
-      <div class="col-md-6 col-lg-3">
-        <div class="card-healin"><p class="eyebrow mb-2">Langkah 1</p><h3 class="h6">Isi gejala</h3>
-        <p class="small text-muted mb-0">Centang gejala fisik, kognitif, emosional, dan perilaku yang kamu rasakan.</p></div>
+    <div class="features-strip reveal">
+      <div class="feature-card-h">
+        <div class="icon-badge-lg"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+        <h3>Skrining Mandiri</h3>
+        <p>Pemeriksaan awal kondisi kesehatan mental secara mandiri kapan saja.</p>
       </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="card-healin"><p class="eyebrow mb-2">Langkah 2</p><h3 class="h6">Sistem menelusuri aturan</h3>
-        <p class="small text-muted mb-0">Mesin inferensi mencocokkan gejalamu dengan basis aturan IF-THEN.</p></div>
+      <div class="feature-card-h">
+        <div class="icon-badge-lg"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M9 7V5a3 3 0 0 1 6 0v2M9 13h.01M15 13h.01"/></svg></div>
+        <h3>Inferensi AI</h3>
+        <p>Mesin inferensi Forward Chaining yang memproses gejala secara sistematis.</p>
       </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="card-healin"><p class="eyebrow mb-2">Langkah 3</p><h3 class="h6">Kesimpulan ditarik</h3>
-        <p class="small text-muted mb-0">Kondisi dengan tingkat keparahan tertinggi yang aktif menjadi hasil akhir.</p></div>
+      <div class="feature-card-h">
+        <div class="icon-badge-lg"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></div>
+        <h3>Hasil &amp; Laporan</h3>
+        <p>Output identifikasi kondisi disertai penjelasan alur penalaran lengkap.</p>
       </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="card-healin"><p class="eyebrow mb-2">Langkah 4</p><h3 class="h6">Rekomendasi tindak lanjut</h3>
-        <p class="small text-muted mb-0">Kamu menerima saran mandiri, atau anjuran konsultasi profesional.</p></div>
+      <div class="feature-card-h">
+        <div class="icon-badge-lg"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M12 10l-5 5M12 10l5 5"/><path d="M5 20h14"/></svg></div>
+        <h3>Rekomendasi</h3>
+        <p>Saran tindak lanjut mulai dari mandiri hingga konsultasi profesional.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ================= FOOTER ================= -->
-<footer class="footer-healin">
+<footer class="footer-healin" id="kontak">
   <div class="container">
-    <div class="row g-4">
-      <div class="col-md-4">
-        <h6>Heal.In</h6>
-        <p class="small">Sistem pakar skrining kesehatan mental mahasiswa — proyek akhir mata kuliah Kecerdasan Buatan, Kelompok IK24-A.</p>
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-5">
+        <p class="footer-lede mb-4">Memiliki pertanyaan atau membutuhkan informasi terkait Heal.In? Hubungi kami melalui kontak berikut.</p>
+        <div class="d-flex flex-column flex-sm-row gap-3">
+          <div class="footer-box">
+            <p class="label mb-1">Alamat</p>
+            <p class="mb-0">Kampus Institut Teknologi B.J Habibie<br>Parepare, Sulawesi Selatan</p>
+          </div>
+          <div class="footer-box">
+            <p class="label mb-1">Email</p>
+            <p class="mb-2">Heal.In@gmail.com</p>
+            <p class="label mb-1">Telepon</p>
+            <p class="mb-0">+62 1234 5678 910</p>
+          </div>
+        </div>
       </div>
-      <div class="col-md-4">
-        <h6>Kontak</h6>
-        <p class="small mb-1">Kampus Institut Teknologi B.J Habibie, Parepare</p>
-        <p class="small mb-0">Heal.In@gmail.com</p>
-      </div>
-      <div class="col-md-4">
-        <h6>Perlu bantuan segera?</h6>
-        <p class="small mb-0">Hasil skrining bukan pengganti diagnosis. Hubungi konselor kampus atau layanan kesehatan mental profesional bila kondisimu berat.</p>
+      <div class="col-lg-7">
+        <div class="d-flex flex-column flex-md-row justify-content-md-end align-items-md-center gap-3">
+          <span class="contacts-label">C O N T A C T S</span>
+          <div class="d-flex gap-2">
+            <a href="#" class="social-icon" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+            <a href="#" class="social-icon" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9h3V5h-3a4 4 0 0 0-4 4v2H7v4h3v7h4v-7h3l1-4h-4v-2a1 1 0 0 1 1-1z"/></svg></a>
+            <a href="#" class="social-icon" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 0 1 4 0v4M11 13v4"/></svg></a>
+            <a href="#" class="social-icon" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a>
+          </div>
+        </div>
       </div>
     </div>
-    <hr style="border-color:rgba(255,255,255,.15); margin:2rem 0 1rem;">
-    <p class="small mb-0" style="color:rgba(255,255,255,.55);">© 2026 Heal.In — ITH Kelompok IK24-A.</p>
   </div>
+  <p class="footer-bottom-bar mt-5 mb-0">© 2026 Heal.In — Institut Teknologi B.J Habibie</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('is-visible'));
+  }
+
+  // Deteksi filter pills (visual state only — cards map to future category data)
+  document.querySelectorAll('.filter-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
 </body>
 </html>
