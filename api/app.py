@@ -21,7 +21,25 @@ from engine.knowledge_engine import run_inference  # noqa: E402
 from rules.gejala_list import SEMUA_GEJALA  # noqa: E402
 from rules.rekomendasi import get_rekomendasi  # noqa: E402
 
-app = Flask(__name__)
+# --------------------------------------------------------------------- #
+# Menyajikan folder frontend/ langsung dari Flask (agar pengguna tidak
+# perlu menjalankan server terpisah untuk frontend, misalnya Live
+# Server). Dengan ini, membuka http://127.0.0.1:5000/ sudah otomatis
+# menampilkan index.html beserta seluruh halaman/aset lain (css, js,
+# gambar) di frontend/, DAN endpoint /api/* tetap berjalan di origin
+# yang sama -- jadi tidak akan ada lagi error CORS/"Failed to fetch"
+# akibat frontend & backend dibuka dari alamat yang berbeda.
+# --------------------------------------------------------------------- #
+FRONTEND_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend"
+)
+
+app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
+
+
+@app.route("/")
+def serve_frontend_index():
+    return app.send_static_file("index.html")
 
 # --------------------------------------------------------------------- #
 # Konfigurasi database PostgreSQL (fondasi untuk fitur Login, History,

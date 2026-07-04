@@ -95,7 +95,7 @@ form.addEventListener("submit", async (e) => {
     sessionStorage.removeItem("healin_start_time");
     window.location.href = "result.html";
   } catch (err) {
-    errorBox.textContent = `Gagal terhubung ke server: ${err.message}. Pastikan backend Flask sudah berjalan di ${API_BASE_URL}.`;
+    errorBox.textContent = err.message || "Terjadi kesalahan saat memproses hasil skrining.";
     errorBox.classList.remove("d-none");
     btnSubmit.disabled = false;
     btnSubmit.textContent = "Lihat Hasil";
